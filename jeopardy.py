@@ -54,9 +54,12 @@ pane1.addRect(headers)
 while not crashed:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            for i in range(len(headers)):
-                if(i*(width/6)<event.pos[0]<(i+1)*(width/6)):
-                    print(i)
+            for col in range(len(headers)):
+                if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
+                    print('col',col)
+                    for row in range(5):
+                        if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
+                            print('row',row)
             
             
 
