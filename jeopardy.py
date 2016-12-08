@@ -31,10 +31,6 @@ class Pane(object):
 
         curser=width/6
 
-        for x,header in enumerate(headers):
-            self.rect = pygame.draw.rect(self.screen, (black), (0, 0, curser, 100),2)
-            curser+=width/6
-            pygame.display.update()
 
         for row in range(6):
             curser=width/6
@@ -63,13 +59,15 @@ class Question(object):
 
     def show(self,r,c):
         curser=0
+        self.rect = pygame.draw.rect(self.screen, (black), (0, 0, width, height))
         print('SHOW QUESTION:',r,c)
-        # self.screen.blit(self.font.render(q, True, (255,0,0)), (curser, 100))
+        self.screen.blit(self.font.render('SDDSFDSAASFD', True, (255,0,0)), (curser, 100))
+
         # curser+=width/6
         # pygame.display.update()
 
 
-crashed = False
+question_time = False
 pane1= Pane()
 question_screen = Question()
 
@@ -77,26 +75,39 @@ headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Compo
 question=['What is your name?']
 pane1.draw_grid(headers)
 pane1.addText(headers)
+while 1:
+    while not question_time:
+        r, c = 0 , 0
+        
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                print('Board')
+                for col in range(len(headers)):
+                    if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
+                        # print('col',col)
+                        c=col
+                        for row in range(6):
+                            if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
+                                # print('row',row)
+                                r=row
+                question_time=True
+                
 
-while not crashed:
-    r, c = 0 , 0
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            for col in range(len(headers)):
-                if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
-                    # print('col',col)
-                    c=col
-                    for row in range(6):
-                        if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
-                            # print('row',row)
-                            r=row
-            question_screen.show(r,c)
-            
+            if event.type == pygame.QUIT:
+                crashed = True
 
-        if event.type == pygame.QUIT:
-            crashed = True
+            # print(event)
 
-        # print(event)
+        pygame.display.update()
+        clock.tick(60)
 
-    pygame.display.update()
-    clock.tick(60)
+    while question_time:
+        question_screen.show(1,1)
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                print("Question Time")  
+                question_time = False
+        pane1.draw_grid(headers)
+
+        pygame.display.update()
+        clock.tick(60)
