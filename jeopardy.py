@@ -95,7 +95,7 @@ while 1:
 
             if event.type == pygame.QUIT:
                 crashed = True
-
+ 
             # print(event)
 
         pygame.display.update()
