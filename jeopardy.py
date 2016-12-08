@@ -18,7 +18,7 @@ width, height = 1200,600
 class Pane(object):
     def __init__(self):
         pygame.init()
-        self.font = pygame.font.SysFont('Arial', 25)
+        self.font = pygame.font.SysFont('Arial', 18)
         pygame.display.set_caption('Box Test')
         self.screen = pygame.display.set_mode((width,height), 0, 32)
         self.screen.fill((white))
@@ -52,23 +52,45 @@ class Pane(object):
             curser+=width/6
             pygame.display.update()
 
+class Question(object):
+    def __init__(self):
+        pygame.init()
+        self.font = pygame.font.SysFont('Arial', 18)
+        pygame.display.set_caption('Box Test')
+        self.screen = pygame.display.set_mode((width,height), 0, 32)
+        self.screen.fill((white))
+        pygame.display.update()
+
+    def show(self,r,c):
+        curser=0
+        print('SHOW QUESTION:',r,c)
+        # self.screen.blit(self.font.render(q, True, (255,0,0)), (curser, 100))
+        # curser+=width/6
+        # pygame.display.update()
+
+
 crashed = False
 pane1= Pane()
+question_screen = Question()
+
 headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
 question=['What is your name?']
 pane1.draw_grid(headers)
-# pane1.addText(headers)
+pane1.addText(headers)
 
 while not crashed:
+    r, c = 0 , 0
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             for col in range(len(headers)):
                 if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
-                    print('col',col)
-                    for row in range(5):
+                    # print('col',col)
+                    c=col
+                    for row in range(6):
                         if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
-                            print('row',row)
-            
+                            # print('row',row)
+                            r=row
+            question_screen.show(r,c)
             
 
         if event.type == pygame.QUIT:
