@@ -27,14 +27,22 @@ class Pane(object):
 
     def addRect(self,headers):
         self.rect = pygame.draw.rect(self.screen, (blue), (0, 0, width, 100))
+        pygame.display.update()
+
         curser=width/6
+
         for x,header in enumerate(headers):
-            self.rect = pygame.draw.rect(self.screen, (black), (0, 0, curser, 100),5)
+            self.rect = pygame.draw.rect(self.screen, (black), (0, 0, curser, 100),2)
             curser+=width/6
             pygame.display.update()
-
         
-        pygame.display.update()
+        for row in range(6):
+            curser=width/6
+            for x,header in enumerate(headers):
+                self.rect = pygame.draw.rect(self.screen, (black), (0, row*100, curser, 100),2)
+                curser+=width/6
+                pygame.display.update()
+        
 
     def addText(self,headers):
         curser=0
