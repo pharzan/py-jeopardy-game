@@ -5,9 +5,22 @@ from pygame.locals import *
 if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
 
+show_question_flag=False
+start_flag = False
+team_number = int(input("Number of teams: "))
+team_names = []
+team_scores = []
+
+for i in range(team_number):
+    name=input("Team Name: ")
+    team_names.append(name)
+    team_scores.append(0)
+
+print(team_names)
+
 pygame.init()
 gameDisplay = pygame.display.set_mode((800,600))
-pygame.display.set_caption('A bit Racey')
+pygame.display.set_caption('Jeoprady by Pharzan')
 clock = pygame.time.Clock()
 
 white = (255,255,255)
@@ -96,18 +109,6 @@ headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Compo
 question=['What is your name?']
 # pane1.draw_grid(headers)
 # pane1.addText(headers)
-show_question_flag=False
-start_flag = False
-team_number = int(input("Number of teams: "))
-team_names = []
-team_scores = []
-for i in range(team_number):
-    name=input("Team Name: ")
-    team_names.append(name)
-    team_scores.append(0)
-
-
-print(team_names)
 while 1:
 
     while not question_time:
