@@ -25,7 +25,7 @@ class Pane(object):
         pygame.display.update()
 
 
-    def addRect(self,headers):
+    def draw_grid(self,headers):
         self.rect = pygame.draw.rect(self.screen, (blue), (0, 0, width, 100))
         pygame.display.update()
 
@@ -35,7 +35,7 @@ class Pane(object):
             self.rect = pygame.draw.rect(self.screen, (black), (0, 0, curser, 100),2)
             curser+=width/6
             pygame.display.update()
-        
+
         for row in range(6):
             curser=width/6
             for x,header in enumerate(headers):
@@ -56,7 +56,7 @@ crashed = False
 pane1= Pane()
 headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
 question=['What is your name?']
-pane1.addRect(headers)
+pane1.draw_grid(headers)
 # pane1.addText(headers)
 
 while not crashed:
