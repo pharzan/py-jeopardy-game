@@ -14,13 +14,13 @@ white = (255,255,255)
 black = (0,0,0)
 blue = (0,0,255)
 
-width, height = 1200,800
+width, height = 1200,600
 class Pane(object):
     def __init__(self):
         pygame.init()
         self.font = pygame.font.SysFont('Arial', 18)
         pygame.display.set_caption('Box Test')
-        self.screen = pygame.display.set_mode((width,height), 0, 32)
+        self.screen = pygame.display.set_mode((width,800), 0, 32)
         self.screen.fill((white))
         self.draw_grid_flag=True
         pygame.display.update()
@@ -68,7 +68,7 @@ class Question(object):
         pygame.init()
         self.font = pygame.font.SysFont('Arial', 18)
         pygame.display.set_caption('Box Test')
-        self.screen = pygame.display.set_mode((width,height), 0, 32)
+        self.screen = pygame.display.set_mode((width,height+200), 0, 32)
         self.screen.fill((white))
         pygame.display.update()
 
@@ -81,6 +81,13 @@ class Question(object):
         # curser+=width/6
         # pygame.display.update()
 
+score_matrix=[[100,100,100,100,100,100],
+              [200,200,200,200,200,200],
+              [300,300,300,300,300,300],
+              [400,400,400,400,400,400],
+              [500,500,500,500,500,500],
+              [600,600,600,600,600,600]
+              ]
 question_time = False
 pane1= Pane()
 question_screen = Question()
@@ -115,8 +122,8 @@ while 1:
                         c = col
                         for row in range(6):
                             if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
-                                # print('row',row)
                                 r = row
+                                print('Clicked on:',r,c,'SCORE:',score_matrix[r][c])
                                 show_question_flag=True
                                 question_time=True
 
@@ -134,7 +141,6 @@ while 1:
             question_screen.show(1,1)
             show_question_flag = False
         for event in pygame.event.get():
-            print(show_question_flag)
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 print("Question Time")
                 question_time = False
