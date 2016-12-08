@@ -22,11 +22,15 @@ class Pane(object):
         pygame.display.set_caption('Box Test')
         self.screen = pygame.display.set_mode((width,height), 0, 32)
         self.screen.fill((white))
+        self.draw_grid_flag=True
         pygame.display.update()
 
 
     def draw_grid(self,headers):
-        self.rect = pygame.draw.rect(self.screen, (blue), (0, 0, width, 100))
+        if self.draw_grid_flag: 
+            self.screen.fill((white))
+            self.rect = pygame.draw.rect(self.screen, (blue), (0, 0, width, 100))
+            self.draw_grid_flag=False
         pygame.display.update()
 
         curser=width/6
@@ -75,13 +79,14 @@ headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Compo
 question=['What is your name?']
 pane1.draw_grid(headers)
 pane1.addText(headers)
+show_question_flag=False
 while 1:
     while not question_time:
         r, c = 0 , 0
-        
+        pane1.draw_grid(headers)
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                print('Board')
+                print('Board Time')        
                 for col in range(len(headers)):
                     if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
                         # print('col',col)
@@ -90,7 +95,10 @@ while 1:
                             if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
                                 # print('row',row)
                                 r=row
-                question_time=True
+                                show_question_flag=True
+                                question_time=True
+
+                
                 
 
             if event.type == pygame.QUIT:
@@ -102,12 +110,17 @@ while 1:
         clock.tick(60)
 
     while question_time:
-        question_screen.show(1,1)
+
+        if show_question_flag:
+            question_screen.show(1,1)
+            show_question_flag = False
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                print("Question Time")  
+            print(show_question_flag)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  
+                print("Question Time")
                 question_time = False
-        pane1.draw_grid(headers)
+                pane1.draw_grid_flag = True
+        
 
         pygame.display.update()
         clock.tick(60)
