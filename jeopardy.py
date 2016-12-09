@@ -5,6 +5,28 @@ from pygame.locals import *
 if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
 
+q={
+    (1,1):{"question":'What color is the sky?', "answer":'blue'},
+    (1,2):{"question":'When do people do when they wake up?', "answer":'take a shower'}
+    
+}
+print(q[1,2])
+class Player(object):
+    def __init__(self,team_name,players):
+        self.score = 0
+        self.team_name=team_name
+        self.players = players
+
+    def set_score(self,score):
+        self.score = score
+
+
+p1=Player('hello',['a','b','c','s'])
+p1.set_score(99)
+
+
+print(p1.score,p1.team_name,p1.players)
+
 show_question_flag=False
 start_flag = False
 team_number = int(input("Number of teams: "))
@@ -101,6 +123,7 @@ score_matrix=[[100,100,100,100,100,100],
               [500,500,500,500,500,500],
               [600,600,600,600,600,600]
               ]
+
 question_time = False
 pane1= Pane()
 question_screen = Question()
@@ -130,9 +153,7 @@ while 1:
 
             if event.type == pygame.QUIT:
                 crashed = True
- 
             # print(event)
-
         pygame.display.update()
         clock.tick(60)
 
