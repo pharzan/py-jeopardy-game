@@ -33,7 +33,7 @@ start_flag = False
 team_number = int(input("Number of teams: "))
 team_names = []
 team_scores = []
-
+already_selected = []
 for i in range(team_number):
     name=input("Team Name: ")
     team_names.append(name)
@@ -77,8 +77,12 @@ class Pane(object):
             curser=width/6
             for x,header in enumerate(headers):
                 self.rect = pygame.draw.rect(self.screen, (black), (0, row*100, curser, 100),2)
+
                 curser+=width/6
                 pygame.display.update()
+
+    def clear_already_selected(self,col,row):
+        pygame.draw.rect(self.screen, (black), (row*(width/6), col*100, width/6, 100))
         
     def show_score(self):
         curser=0
@@ -113,7 +117,7 @@ class Question(object):
         self.rect = pygame.draw.rect(self.screen, (black), (0, 0, width, height))
         print('SHOW QUESTION:',r,c)
         self.screen.blit(self.font.render('SDDSFDSAASFD', True, (255,0,0)), (curser, 100))
-
+        self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
         # curser+=width/6
         # pygame.display.update()
 
@@ -136,9 +140,13 @@ question=['What is your name?']
 # pane1.addText(headers)
 while 1:
 
+    clock.tick(60)
     while not question_time:
         r, c = 0 , 0
         pane1.draw_grid(headers)
+        for each_already_selected in already_selected:
+            print(each_already_selected[0],each_already_selected[1])
+            pane1.clear_already_selected(each_already_selected[0],each_already_selected[1])
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if team_selected:
@@ -152,15 +160,18 @@ while 1:
                                     r = row
                                     print('Clicked on:',r,c,'SCORE:',score_matrix[r][c])
                                     show_question_flag=True
-                                    question_time=True
+                                    if (r,c) not in already_selected:
+                                        already_selected.append((r,c))
+                                        question_time=True
+                                    else:
+                                        print('already selected')
                 else:
                     print('First select a team')
                     for col in range(6):
                         if(col*(width/6)<event.pos[0]<(col+1)*(width/6) and event.pos[1]>600):
                             # answering_team = teams[col]
-                            print('Selected Team to answer:',col)
+                            print('Selected Team:',col, 'Selected Team Name:',team_names[col],'score',team_scores[col])
                             team_selected = True
-
 
             if event.type == pygame.QUIT:
                 crashed = True
