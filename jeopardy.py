@@ -64,11 +64,12 @@ class Pane(object):
 
     def draw_grid(self,headers):
         if self.draw_grid_flag: 
-            self.screen.fill((white))
+            self.screen.fill((white))    
             self.rect = pygame.draw.rect(self.screen, (blue), (0, 0, width, 100))
+        
             self.draw_grid_flag=False
             self.show_score()
-        pygame.display.update()
+        # pygame.display.update()
 
         curser=width/6
 
@@ -77,10 +78,10 @@ class Pane(object):
             curser=width/6
             for x,header in enumerate(headers):
                 self.rect = pygame.draw.rect(self.screen, (black), (0, row*100, curser, 100),2)
-
+        
                 curser+=width/6
-                pygame.display.update()
-
+                # pygame.display.update()
+        pygame.display.update()
     def clear_already_selected(self,col,row):
         pygame.draw.rect(self.screen, (black), (row*(width/6), col*100, width/6, 100))
         
