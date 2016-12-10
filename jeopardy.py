@@ -11,6 +11,7 @@ q={
     
 }
 print(q[1,2])
+
 class Player(object):
     def __init__(self,team_name,players):
         self.score = 0
@@ -107,7 +108,7 @@ class Question(object):
         self.screen.fill((white))
         pygame.display.update()
 
-    def show(self,r,c):
+    def show(self):
         curser=0
         self.rect = pygame.draw.rect(self.screen, (black), (0, 0, width, height))
         print('SHOW QUESTION:',r,c)
@@ -124,6 +125,7 @@ score_matrix=[[100,100,100,100,100,100],
               [600,600,600,600,600,600]
               ]
 
+team_selected = False
 question_time = False
 pane1= Pane()
 question_screen = Question()
@@ -139,17 +141,26 @@ while 1:
         pane1.draw_grid(headers)
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                print('Board Time')        
-                for col in range(len(headers)):
-                    if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
-                        # print('col',col)
-                        c = col
-                        for row in range(6):
-                            if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
-                                r = row
-                                print('Clicked on:',r,c,'SCORE:',score_matrix[r][c])
-                                show_question_flag=True
-                                question_time=True
+                if team_selected:
+                    print('Board Time')        
+                    for col in range(len(headers)):
+                        if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
+                            # print('col',col)
+                            c = col
+                            for row in range(6):
+                                if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
+                                    r = row
+                                    print('Clicked on:',r,c,'SCORE:',score_matrix[r][c])
+                                    show_question_flag=True
+                                    question_time=True
+                else:
+                    print('First select a team')
+                    for col in range(6):
+                        if(col*(width/6)<event.pos[0]<(col+1)*(width/6) and event.pos[1]>600):
+                            # answering_team = teams[col]
+                            print('Selected Team to answer:',col)
+                            team_selected = True
+
 
             if event.type == pygame.QUIT:
                 crashed = True
@@ -158,15 +169,15 @@ while 1:
         clock.tick(60)
 
     while question_time:
-
         if show_question_flag:
-            question_screen.show(1,1)
+            question_screen.show()
             show_question_flag = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 print("Question Time")
+                team_selected = False
                 question_time = False
                 pane1.draw_grid_flag = True
-        
+            
         pygame.display.update()
         clock.tick(60)
