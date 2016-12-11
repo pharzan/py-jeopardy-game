@@ -134,7 +134,7 @@ team_selected = False
 question_time = False
 pane1= Pane()
 question_screen = Question()
-
+grid_drawn_flag = False
 headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
 question=['What is your name?']
 # pane1.draw_grid(headers)
@@ -144,7 +144,9 @@ while 1:
     clock.tick(60)
     while not question_time:
         r, c = 0 , 0
-        pane1.draw_grid(headers)
+        if not grid_drawn_flag:
+            pane1.draw_grid(headers)
+            grid_drawn_flag=True
         for each_already_selected in already_selected:
             print(each_already_selected[0],each_already_selected[1])
             pane1.clear_already_selected(each_already_selected[0],each_already_selected[1])
@@ -181,6 +183,7 @@ while 1:
         clock.tick(60)
 
     while question_time:
+        grid_drawn_flag = False
         if show_question_flag:
             question_screen.show()
             show_question_flag = False
@@ -188,6 +191,7 @@ while 1:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 print("Question Time")
                 team_selected = False
+
                 question_time = False
                 pane1.draw_grid_flag = True
             
