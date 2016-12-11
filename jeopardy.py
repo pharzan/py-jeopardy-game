@@ -128,7 +128,8 @@ class Question(object):
         curser+=width/6
         pygame.display.update()
 
-score_matrix=[[100,"Second","Third","Fourth","Fifth","Sixth"],
+board_matrix=[
+              ["First","Second","Third","Fourth","Fifth","Sixth"],
               [200,200,200,200,200,200],
               [400,400,400,400,400,400],
               [600,600,600,600,600,600],
@@ -154,7 +155,7 @@ while 1:
             pane1.draw_grid(headers)
             for i in range(6):
                 for j in range(6):
-                    pane1.addText((i,j),score_matrix[j][i])
+                    pane1.addText((i,j),board_matrix[j][i])
             grid_drawn_flag=True
 
         for each_already_selected in already_selected:
@@ -171,7 +172,7 @@ while 1:
                             for row in range(6):
                                 if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
                                     r = row
-                                    print('Clicked on:',r,c,'SCORE:',score_matrix[r][c])
+                                    print('Clicked on:',r,c,'SCORE:',board_matrix[r][c])
                                     show_question_flag=True
                                     if (r,c) not in already_selected:
                                         already_selected.append((r,c))
