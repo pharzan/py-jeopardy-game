@@ -7,11 +7,14 @@ if not pygame.mixer: print ('Warning, sound disabled')
 
 q={
     'categories':['Hello'],
-    (1,1):{"question":'What color is the sky?', "answer":'blue'},
-    (1,2):{"question":'When do people do when they wake up?', "answer":'take a shower'}
-    
-}
-print(q[1,2])
+    (1,0):{"question":'What color is the sky?', "answer":'blue'},
+    (2,0):{"question":'When do people do when they wake up?', "answer":'take a shower'},
+    (3,0):{"question":'This is going to be a long long qustion so better get an error when I see this question not complete and lets seehow it goes', "answer":'pharzan'},
+    (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf'}
+    }
+     
+
+print(q[1,0])
 
 class Player(object):
     def __init__(self,team_name,players):
@@ -63,7 +66,7 @@ class Pane(object):
         pygame.display.update()
 
 
-    def draw_grid(self,headers):
+    def draw_grid(self):
         if self.draw_grid_flag: 
             self.screen.fill((white))    
             self.rect = pygame.draw.rect(self.screen, (blue), (0, 0, width, 100))
@@ -113,19 +116,22 @@ class Pane(object):
 class Question(object):
     def __init__(self):
         pygame.init()
-        self.font = pygame.font.SysFont('Arial', 18)
+        self.font = pygame.font.SysFont('Arial', 24)
         pygame.display.set_caption('Box Test')
         self.screen = pygame.display.set_mode((width,height+200), 0, 32)
         self.screen.fill((white))
         pygame.display.update()
 
-    def show(self):
-        curser=0
+    def show(self,q):
+        # curser=0
         self.rect = pygame.draw.rect(self.screen, (black), (0, 0, width, height))
+        sizeX, sizeY = self.font.size(q)
+        if (sizeX>width):
+            print("TEXT TOOO LONG!!!")
         print('SHOW QUESTION:',r,c)
-        self.screen.blit(self.font.render('SDDSFDSAASFD', True, (255,0,0)), (curser, 100))
+        self.screen.blit(self.font.render(q, True, (255,0,0)), (width/2-(sizeX/2), height/2))
         self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
-        curser+=width/6
+        # curser+=width/6
         pygame.display.update()
 
 board_matrix=[
@@ -136,7 +142,7 @@ board_matrix=[
               [800,800,800,800,800,800],
               [1000,1000,1000,1000,1000,1000]
               ]
-
+current_selected=[0,0]
 team_selected = False
 question_time = False
 pane1= Pane()
@@ -152,20 +158,20 @@ while 1:
     while not question_time:
         r, c = 0 , 0
         if not grid_drawn_flag:
-            pane1.draw_grid(headers)
+            pane1.draw_grid()
             for i in range(6):
                 for j in range(6):
                     pane1.addText((i,j),board_matrix[j][i])
             grid_drawn_flag=True
 
         for each_already_selected in already_selected:
-            print(each_already_selected[0],each_already_selected[1])
+            # print(each_already_selected[0],each_already_selected[1])
             pane1.clear_already_selected(each_already_selected[0],each_already_selected[1])
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if team_selected:
                     print('Board Time')        
-                    for col in range(len(headers)):
+                    for col in range(7):
                         if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
                             # print('col',col)
                             c = col
@@ -176,6 +182,7 @@ while 1:
                                     show_question_flag=True
                                     if (r,c) not in already_selected:
                                         already_selected.append((r,c))
+                                        current_selected=[r,c]
                                         question_time=True
                                     else:
                                         print('already selected')
@@ -196,11 +203,18 @@ while 1:
     while question_time:
         grid_drawn_flag = False
         if show_question_flag:
-            question_screen.show()
+            print("Current Selected",current_selected)
+            try:
+                question=q[current_selected[0],current_selected[1]]['question']
+                print("Question:",q[current_selected[0],current_selected[1]]['question'])
+            except:
+                print('No Question Found For Position')
+            question_screen.show(question)
             show_question_flag = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 print("Question Time")
+                
                 team_selected = False
 
                 question_time = False
