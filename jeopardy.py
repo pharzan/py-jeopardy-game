@@ -6,6 +6,7 @@ if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
 
 q={
+    'categories':['Hello'],
     (1,1):{"question":'What color is the sky?', "answer":'blue'},
     (1,2):{"question":'When do people do when they wake up?', "answer":'take a shower'}
     
@@ -82,6 +83,7 @@ class Pane(object):
                 curser+=width/6
                 # pygame.display.update()
         pygame.display.update()
+
     def clear_already_selected(self,col,row):
         pygame.draw.rect(self.screen, (black), (row*(width/6), col*100, width/6, 100))
         
@@ -95,14 +97,18 @@ class Pane(object):
             self.screen.blit(self.font.render(str(score), True, (255,0,0)), (curser, 620))
             curser+=width/6
 
+    def addText(self,pos,text):
 
-    def addText(self,headers):
-        curser=0
-        for x,header in enumerate(headers):
-            print(curser)
-            self.screen.blit(self.font.render(header, True, (255,0,0)), (curser, 100))
-            curser+=width/6
-            pygame.display.update()
+        print(pos,text)
+        x = pos[0]*width/6+10
+        y= 100*pos[1]+35
+        self.screen.blit(self.font.render(str(text), True, (255,0,0)), (x, y))
+        
+        # for x,header in enumerate(headers):
+        #     print(curser)
+        #     self.screen.blit(self.font.render(header, True, (255,0,0)), (curser, 100))
+        #     curser+=width/6
+        #     pygame.display.update()
 
 class Question(object):
     def __init__(self):
@@ -119,15 +125,15 @@ class Question(object):
         print('SHOW QUESTION:',r,c)
         self.screen.blit(self.font.render('SDDSFDSAASFD', True, (255,0,0)), (curser, 100))
         self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
-        # curser+=width/6
-        # pygame.display.update()
+        curser+=width/6
+        pygame.display.update()
 
-score_matrix=[[100,100,100,100,100,100],
+score_matrix=[[100,"Second","Third","Fourth","Fifth","Sixth"],
               [200,200,200,200,200,200],
-              [300,300,300,300,300,300],
               [400,400,400,400,400,400],
-              [500,500,500,500,500,500],
-              [600,600,600,600,600,600]
+              [600,600,600,600,600,600],
+              [800,800,800,800,800,800],
+              [1000,1000,1000,1000,1000,1000]
               ]
 
 team_selected = False
@@ -146,7 +152,11 @@ while 1:
         r, c = 0 , 0
         if not grid_drawn_flag:
             pane1.draw_grid(headers)
+            for i in range(6):
+                for j in range(6):
+                    pane1.addText((i,j),score_matrix[j][i])
             grid_drawn_flag=True
+
         for each_already_selected in already_selected:
             print(each_already_selected[0],each_already_selected[1])
             pane1.clear_already_selected(each_already_selected[0],each_already_selected[1])
