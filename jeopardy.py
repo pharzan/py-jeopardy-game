@@ -142,6 +142,7 @@ class Question(object):
         self.screen.blit(self.font.render(str(text), True, (255,0,0)), (width/2-(sizeX/2), height/2))
         self.rect = pygame.draw.rect(self.screen, (green), ((width/6), 500, width/6, 100))
         self.rect = pygame.draw.rect(self.screen, (red), (4*(width/6), 500, width/6, 100))
+        self.rect = pygame.draw.rect(self.screen, (red), ((width/2)-(width/(18*2)), 500, width/18, 100))
         pygame.display.update()
 
 board_matrix=[
@@ -227,24 +228,26 @@ while 1:
             show_question_flag = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                click_count+=1
-                # question_screen.show_answer()
-                print(q[r,c]['answer'])
-                question_screen.show_answer(q[r,c]['answer'])
-                print("Selected Question",c,r,"Points:",board_matrix[c][r],'Click Count:',click_count)
-                print("Question Time")
-                if click_count==2:
-                    if (event.pos[0]>(width/6) and event.pos[0]<2*(width/6)):
-                        print ("RIGHTTTTT")
-                        team_scores[selected_team_index] = team_scores[selected_team_index]+board_matrix[r][c]
-                    elif (event.pos[0]>4*(width/6) and event.pos[0]<5*(width/6)):
-                        print('WRONGGGG!')
-                        team_scores[selected_team_index] = team_scores[selected_team_index]-board_matrix[r][c]
-                    print('Second Click:',event.pos[0],event.pos[1])
-                    team_selected = False
-                    question_time = False
-                    pane1.draw_grid_flag = True
-                    click_count = 0
-            
+                if event.pos[1]<500:
+                    click_count+=1
+                    # question_screen.show_answer()
+                    print(q[r,c]['answer'])
+                    question_screen.show_answer(q[r,c]['answer'])
+                    print("Selected Question",c,r,"Points:",board_matrix[c][r],'Click Count:',click_count)
+                    print("Question Time")
+                    if click_count==2:
+                        if (event.pos[0]>(width/6) and event.pos[0]<2*(width/6)):
+                            print ("RIGHTTTTT")
+                            team_scores[selected_team_index] = team_scores[selected_team_index]+board_matrix[r][c]
+                        elif (event.pos[0]>4*(width/6) and event.pos[0]<5*(width/6)):
+                            print('WRONGGGG!')
+                            team_scores[selected_team_index] = team_scores[selected_team_index]-board_matrix[r][c]
+                        print('Second Click:',event.pos[0],event.pos[1])
+                        team_selected = False
+                        question_time = False
+                        pane1.draw_grid_flag = True
+                        click_count = 0
+                else:
+                    print('NEW TEAM SELECT MODE!')
         pygame.display.update()
         clock.tick(60)
