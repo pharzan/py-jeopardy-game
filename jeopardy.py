@@ -10,7 +10,7 @@ q={
     (1,0):{"question":'What color is the sky?', "answer":'blue'},
     (2,0):{"question":'When do people do when they wake up?', "answer":'take a shower'},
     (3,0):{"question":'This is going to be a long long qustion so better get an error when I see this question not complete and lets seehow it goes', "answer":'pharzan'},
-    (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer":'ksahdksahdkjsadh'}
+    (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer" :'ksahdksahdkjsadh'}
     }
      
 
