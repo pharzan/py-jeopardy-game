@@ -233,6 +233,10 @@ while 1:
                 print("Selected Question",c,r,"Points:",board_matrix[c][r],'Click Count:',click_count)
                 print("Question Time")
                 if click_count==2:
+                    if (event.pos[0]>(width/6) and event.pos[0]<2*(width/6)):
+                        print ("RIGHTTTTT")
+                    elif (event.pos[0]>4*(width/6) and event.pos[0]<5*(width/6)):
+                        print('WRONGGGG!')
                     print('Second Click:',event.pos[0],event.pos[1])
                     team_selected = False
                     question_time = False
