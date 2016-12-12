@@ -51,6 +51,7 @@ pygame.display.set_caption('Jeoprady by Pharzan')
 clock = pygame.time.Clock()
 
 white = (255,255,255)
+grey = (160,160,160)
 black = (0,0,0)
 blue = (0,0,255)
 red = (255,0,0)
@@ -142,7 +143,7 @@ class Question(object):
         self.screen.blit(self.font.render(str(text), True, (255,0,0)), (width/2-(sizeX/2), height/2))
         self.rect = pygame.draw.rect(self.screen, (green), ((width/6), 500, width/6, 100))
         self.rect = pygame.draw.rect(self.screen, (red), (4*(width/6), 500, width/6, 100))
-        self.rect = pygame.draw.rect(self.screen, (red), ((width/2)-(width/(18*2)), 500, width/18, 100))
+        self.rect = pygame.draw.rect(self.screen, (grey), ((width/2)-(width/(18*2)), 500, width/18, 100))
         pygame.display.update()
 
 board_matrix=[
