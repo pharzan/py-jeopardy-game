@@ -10,7 +10,7 @@ q={
     (1,0):{"question":'What color is the sky?', "answer":'blue'},
     (2,0):{"question":'When do people do when they wake up?', "answer":'take a shower'},
     (3,0):{"question":'This is going to be a long long qustion so better get an error when I see this question not complete and lets seehow it goes', "answer":'pharzan'},
-    (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf'}
+    (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer":'ksahdksahdkjsadh'}
     }
      
 
@@ -163,7 +163,7 @@ headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Compo
 question=['What is your name?']
 # pane1.draw_grid(headers)
 # pane1.addText(headers)
-
+selected_team_index=-1
 while 1:
     click_count=0
     clock.tick(60)
@@ -204,6 +204,7 @@ while 1:
                         if(col*(width/6)<event.pos[0]<(col+1)*(width/6) and event.pos[1]>600):
                             # answering_team = teams[col]
                             print('Selected Team:',col, 'Selected Team Name:',team_names[col],'score',team_scores[col])
+                            selected_team_index = col
                             team_selected = True
 
             if event.type == pygame.QUIT:
@@ -235,8 +236,10 @@ while 1:
                 if click_count==2:
                     if (event.pos[0]>(width/6) and event.pos[0]<2*(width/6)):
                         print ("RIGHTTTTT")
+                        team_scores[selected_team_index] = team_scores[selected_team_index]+board_matrix[r][c]
                     elif (event.pos[0]>4*(width/6) and event.pos[0]<5*(width/6)):
                         print('WRONGGGG!')
+                        team_scores[selected_team_index] = team_scores[selected_team_index]-board_matrix[r][c]
                     print('Second Click:',event.pos[0],event.pos[1])
                     team_selected = False
                     question_time = False
