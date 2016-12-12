@@ -134,6 +134,12 @@ class Question(object):
         # curser+=width/6
         pygame.display.update()
 
+    def show_answer(self,text):
+        self.screen.fill((black))
+        sizeX, sizeY = self.font.size(text)
+        self.screen.blit(self.font.render(str(text), True, (255,0,0)), (width/2-(sizeX/2), height/2))
+        pygame.display.update()
+
 board_matrix=[
               ["First","Second","Third","Fourth","Fifth","Sixth"],
               [200,200,200,200,200,200],
@@ -142,6 +148,7 @@ board_matrix=[
               [800,800,800,800,800,800],
               [1000,1000,1000,1000,1000,1000]
               ]
+
 current_selected=[0,0]
 team_selected = False
 question_time = False
@@ -152,8 +159,9 @@ headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Compo
 question=['What is your name?']
 # pane1.draw_grid(headers)
 # pane1.addText(headers)
-while 1:
 
+while 1:
+    click_count=0
     clock.tick(60)
     while not question_time:
         r, c = 0 , 0
@@ -201,6 +209,7 @@ while 1:
         clock.tick(60)
 
     while question_time:
+        
         grid_drawn_flag = False
         if show_question_flag:
             print("Current Selected",current_selected)
@@ -213,12 +222,17 @@ while 1:
             show_question_flag = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                click_count+=1
+                # question_screen.show_answer()
+                question_screen.show_answer("Hello World")
+                print("Selected Question",c,r,"Points:",board_matrix[c][r],'Click Count:',click_count)
                 print("Question Time")
-                
-                team_selected = False
-
-                question_time = False
-                pane1.draw_grid_flag = True
+                if click_count==2:
+                    print('here')
+                    team_selected = False
+                    question_time = False
+                    pane1.draw_grid_flag = True
+                    click_count=0
             
         pygame.display.update()
         clock.tick(60)
