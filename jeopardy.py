@@ -228,7 +228,7 @@ while 1:
             show_question_flag = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if event.pos[1]<500:
+                if event.pos[1]<600:
                     click_count+=1
                     # question_screen.show_answer()
                     print(q[r,c]['answer'])
@@ -248,6 +248,11 @@ while 1:
                         pane1.draw_grid_flag = True
                         click_count = 0
                 else:
+                    for col in range(6):
+                        if(col*(width/6)<event.pos[0]<(col+1)*(width/6) and event.pos[1]>600):
+                            # answering_team = teams[col]
+                            print('Selected Team:',col, 'Selected Team Name:',team_names[col],'score',team_scores[col])
+                            selected_team_index = col
                     print('NEW TEAM SELECT MODE!')
         pygame.display.update()
         clock.tick(60)
