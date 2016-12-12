@@ -224,11 +224,13 @@ while 1:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 click_count+=1
                 # question_screen.show_answer()
-                question_screen.show_answer("Hello World")
+                print(q[r,c]['answer'])
+                question_screen.show_answer(q[r,c]['answer'])
                 print("Selected Question",c,r,"Points:",board_matrix[c][r],'Click Count:',click_count)
                 print("Question Time")
                 if click_count==2:
-                    print('here')
+                    print('Second Click:',event.pos[0],event.pos[1])
+
                     team_selected = False
                     question_time = False
                     pane1.draw_grid_flag = True
