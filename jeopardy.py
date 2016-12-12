@@ -53,6 +53,8 @@ clock = pygame.time.Clock()
 white = (255,255,255)
 black = (0,0,0)
 blue = (0,0,255)
+red = (255,0,0)
+green = (0,255,0)
 
 width, height = 1200,600
 class Pane(object):
@@ -138,6 +140,8 @@ class Question(object):
         self.screen.fill((black))
         sizeX, sizeY = self.font.size(text)
         self.screen.blit(self.font.render(str(text), True, (255,0,0)), (width/2-(sizeX/2), height/2))
+        self.rect = pygame.draw.rect(self.screen, (green), ((width/6), 500, width/6, 100))
+        self.rect = pygame.draw.rect(self.screen, (red), (4*(width/6), 500, width/6, 100))
         pygame.display.update()
 
 board_matrix=[
@@ -230,11 +234,10 @@ while 1:
                 print("Question Time")
                 if click_count==2:
                     print('Second Click:',event.pos[0],event.pos[1])
-
                     team_selected = False
                     question_time = False
                     pane1.draw_grid_flag = True
-                    click_count=0
+                    click_count = 0
             
         pygame.display.update()
         clock.tick(60)
