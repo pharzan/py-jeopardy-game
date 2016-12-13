@@ -1,17 +1,30 @@
 import os, sys
+import pandas as pd
 import pygame
 from pygame.locals import *
 
 if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
+df = pd.read_csv('qset1.csv',header=0)
+q={}
+for i,row in enumerate(df['Row']):
+        q[(row,df['Col'][i])]={"question":str(i),"answer":str(i)}
+print(q)
+# q={
+#     'categories':['Hello'],
+#     (1,0):{"question":'What color is the sky?', "answer":'blue'},
+#     (2,0):{"question":'When do people do when they wake up?', "answer":'take a shower'},
+#     (3,0):{"question":'Question 000', "answer":'blue'},
+#     (4,0):{"question":'Question 000', "answer":'blue'},
+#     (5,0):{"question":'Question 000', "answer":'pharzan'},
 
-q={
-    'categories':['Hello'],
-    (1,0):{"question":'What color is the sky?', "answer":'blue'},
-    (2,0):{"question":'When do people do when they wake up?', "answer":'take a shower'},
-    (3,0):{"question":'This is going to be a long long qustion so better get an error when I see this question not complete and lets seehow it goes', "answer":'pharzan'},
-    (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer" :'ksahdksahdkjsadh'}
-    }
+#     (1,1):{"question":'What color is the sky?', "answer":'blue'},
+#     (2,1):{"question":'When do people do when they wake up?', "answer":'take a shower'},
+#     (3,1):{"question":'Question 000', "answer":'pharzan'},
+#     (4,1):{"question":'Question 000', "answer":'pharzan'},
+#     (5,1):{"question":'Question 000', "answer":'pharzan'},
+#     (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer" :'ksahdksahdkjsadh'}
+#     }
      
 
 print(q[1,0])
