@@ -82,6 +82,7 @@ black = (0,0,0)
 blue = (0,0,255)
 red = (255,0,0)
 green = (0,255,0)
+yellow = (255,255,0)
 
 width, height = 1200,600
 class Pane(object):
@@ -134,7 +135,12 @@ class Pane(object):
         print(pos,text)
         x = pos[0]*width/6+10
         y= 100*pos[1]+35
-        self.screen.blit(self.font.render(str(text), True, (255,0,0)), (x, y))
+        color = red
+        print('Y',y)
+        if y<100:
+            color=yellow
+
+        self.screen.blit(self.font.render(str(text), True, color), (x, y))
         
         # for x,header in enumerate(headers):
         #     print(curser)
