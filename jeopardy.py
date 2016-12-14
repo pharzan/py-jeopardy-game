@@ -1,6 +1,7 @@
 import os, sys
 import pandas as pd
 import pygame
+import time
 from pygame.locals import *
 
 if not pygame.font: print ('Warning, fonts disabled')
@@ -165,7 +166,9 @@ class Question(object):
             print("TEXT TOOO LONG!!!")
         print('SHOW QUESTION:',r,c)
         self.screen.blit(self.font.render(q, True, (255,0,0)), (width/2-(sizeX/2), height/2))
-        self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
+        # timer_box:
+        # self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
+
         # curser+=width/6
         pygame.display.update()
 
@@ -178,12 +181,36 @@ class Question(object):
         self.rect = pygame.draw.rect(self.screen, (grey), ((width/2)-(width/(18*2)), 500, width/18, 100))
         pygame.display.update()
 
+class Timer(object):
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((width,800), 0, 32)
+        self.font = pygame.font.SysFont('Arial', 24)
+        self.timer_x_pos=(width/2)-(width/12)
+        self.timer_y_pos=width/6
+        self.counter=0
+        self.startTime=0
+        # self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
+        # self.screen = pygame.display.set_mode((width,height+200), 0, 32)
+        # self.screen.fill((white))
+        # pygame.display.update()
+    def start(self):
+        self.startTime = time.clock()
+    def show(self):
+        elapsed = round(time.clock()-self.startTime,1)
+        self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, 500, self.timer_y_pos, 100))
+        self.screen.blit(self.font.render(str(elapsed), True, (255,0,0)), (self.timer_x_pos,500))
+        self.counter+=1
+        print(round(time.clock()-self.startTime,2))
+    def reset():
+        self.startTime = time.clock()
 
 current_selected=[0,0]
 team_selected = False
 question_time = False
 pane1= Pane()
 question_screen = Question()
+timer = Timer()
 grid_drawn_flag = False
 # headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
 question=['What is your name?']
@@ -242,8 +269,11 @@ while 1:
     while question_time:
         
         grid_drawn_flag = False
+        timer.show()
+        
         if show_question_flag:
             print("Current Selected",current_selected)
+            timer.start()
             try:
                 question=q[current_selected[0],current_selected[1]]['question']
                 print("Question:",q[current_selected[0],current_selected[1]]['question'])
