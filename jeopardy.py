@@ -7,10 +7,23 @@ if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
 df = pd.read_csv('qset1.csv',header=0)
 q={}
+board_matrix=[
+              ["First","Second","Third","Fourth","Fifth","Sixth"],
+              [200,200,200,200,200,200],
+              [400,400,400,400,400,400],
+              [600,600,600,600,600,600],
+              [800,800,800,800,800,800],
+              [1000,1000,1000,1000,1000,1000]
+              ]
+
 for i,row in enumerate(df['Row']):
         question = str(df["Question"][i])
         answer = str(df["Answer"][i])
         q[(row,df['Col'][i])]={"question":question,"answer":answer}
+for i,cat in enumerate(range(6)):
+    board_matrix[0][i]=df['Categories'][i]
+
+    # headers.append(str(df['Categories'][i]))
 
 # q={
 #     'categories':['Hello'],
@@ -96,7 +109,7 @@ class Pane(object):
 
         for row in range(6):
             curser=width/6
-            for x,header in enumerate(headers):
+            for x,header in enumerate(range(6)):
                 self.rect = pygame.draw.rect(self.screen, (black), (0, row*100, curser, 100),2)
         
                 curser+=width/6
@@ -159,14 +172,6 @@ class Question(object):
         self.rect = pygame.draw.rect(self.screen, (grey), ((width/2)-(width/(18*2)), 500, width/18, 100))
         pygame.display.update()
 
-board_matrix=[
-              ["First","Second","Third","Fourth","Fifth","Sixth"],
-              [200,200,200,200,200,200],
-              [400,400,400,400,400,400],
-              [600,600,600,600,600,600],
-              [800,800,800,800,800,800],
-              [1000,1000,1000,1000,1000,1000]
-              ]
 
 current_selected=[0,0]
 team_selected = False
@@ -174,7 +179,7 @@ question_time = False
 pane1= Pane()
 question_screen = Question()
 grid_drawn_flag = False
-headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
+# headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
 question=['What is your name?']
 # pane1.draw_grid(headers)
 # pane1.addText(headers)
