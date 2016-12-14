@@ -8,7 +8,9 @@ if not pygame.mixer: print ('Warning, sound disabled')
 df = pd.read_csv('qset1.csv',header=0)
 q={}
 for i,row in enumerate(df['Row']):
-        q[(row,df['Col'][i])]={"question":df["Question"][i],"answer":df["Answer"][i]}
+        question = str(df["Question"][i])
+        answer = str(df["Answer"][i])
+        q[(row,df['Col'][i])]={"question":question,"answer":answer}
 
 # q={
 #     'categories':['Hello'],
@@ -36,11 +38,11 @@ class Player(object):
         self.score = score
 
 
-p1=Player('hello',['a','b','c','s'])
+p1 = Player('hello',['a','b','c','s'])
 p1.set_score(99)
 
 
-print(p1.score,p1.team_name,p1.players)
+# print(p1.score,p1.team_name,p1.players)
 
 show_question_flag=False
 start_flag = False
@@ -48,6 +50,7 @@ team_number = int(input("Number of teams: "))
 team_names = []
 team_scores = []
 already_selected = []
+
 for i in range(team_number):
     name=input("Team Name: ")
     team_names.append(name)
