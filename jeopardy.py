@@ -8,8 +8,8 @@ if not pygame.mixer: print ('Warning, sound disabled')
 df = pd.read_csv('qset1.csv',header=0)
 q={}
 for i,row in enumerate(df['Row']):
-        q[(row,df['Col'][i])]={"question":str(i),"answer":str(i)}
-print(q)
+        q[(row,df['Col'][i])]={"question":df["Question"][i],"answer":df["Answer"][i]}
+
 # q={
 #     'categories':['Hello'],
 #     (1,0):{"question":'What color is the sky?', "answer":'blue'},
@@ -25,9 +25,6 @@ print(q)
 #     (5,1):{"question":'Question 000', "answer":'pharzan'},
 #     (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer" :'ksahdksahdkjsadh'}
 #     }
-     
-
-print(q[1,0])
 
 class Player(object):
     def __init__(self,team_name,players):
