@@ -6,8 +6,7 @@ from pygame.locals import *
 MAX_TIME_LIMIT = 20
 if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
-df = pd.read_csv('qset1.csv',header=0)
-q={}
+
 board_matrix=[
               ["First","Second","Third","Fourth","Fifth","Sixth"],
               [200,200,200,200,200,200],
@@ -16,13 +15,19 @@ board_matrix=[
               [800,800,800,800,800,800],
               [1000,1000,1000,1000,1000,1000]
               ]
+q={}
+def get_questions():
+    fileName = input('Enter Question File Name:')
+    # fileName = 'qset1'
+    df = pd.read_csv(fileName+'.csv',header=0)
+    for i,row in enumerate(df['Row']):
+            question = str(df["Question"][i])
+            answer = str(df["Answer"][i])
+            q[(row,df['Col'][i])]={"question":question,"answer":answer}
+    for i,cat in enumerate(range(6)):
+        board_matrix[0][i]=df['Categories'][i]
 
-for i,row in enumerate(df['Row']):
-        question = str(df["Question"][i])
-        answer = str(df["Answer"][i])
-        q[(row,df['Col'][i])]={"question":question,"answer":answer}
-for i,cat in enumerate(range(6)):
-    board_matrix[0][i]=df['Categories'][i]
+get_questions()
 
 class Player(object):
     def __init__(self):
