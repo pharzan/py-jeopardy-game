@@ -17,8 +17,8 @@ board_matrix=[
               ]
 q={}
 def get_questions():
-    fileName = input('Enter Question File Name:')
-    # fileName = 'qset1'
+    # fileName = input('Enter Question File Name:')
+    fileName = 'qset1'
     df = pd.read_csv(fileName+'.csv',header=0)
     for i,row in enumerate(df['Row']):
             question = str(df["Question"][i])
@@ -68,6 +68,7 @@ green = (0,255,0)
 yellow = (255,255,0)
 
 width, height = 1200,600
+
 class Pane(object):
     def __init__(self):
         pygame.init()
@@ -86,6 +87,7 @@ class Pane(object):
         
             self.draw_grid_flag=False
             self.show_score()
+            self.show_selected_box()
         # pygame.display.update()
 
         curser=width/6
@@ -112,9 +114,12 @@ class Pane(object):
         for score in team_scores:
             self.screen.blit(self.font.render(str(score), True, (255,0,0)), (curser, 620))
             curser+=width/6
-
+    def show_selected_box(self):
+        print('>>>>>>>',selected_team_index)
+        self.show_score()
+        self.rect = pygame.draw.rect(self.screen, (yellow), (selected_team_index*(width/6),600 , width/6, 100),2)
+        
     def addText(self,pos,text):
-
         print(pos,text)
         x = pos[0]*width/6+10
         y= 100*pos[1]+35
@@ -237,6 +242,7 @@ while 1:
                             # answering_team = teams[col]
                             print('Selected Team:',col, 'Selected Team Name:',team_names[col],'score',team_scores[col])
                             selected_team_index = col
+                            pane1.show_selected_box()
                             team_selected = True
 
             if event.type == pygame.QUIT:
@@ -245,12 +251,10 @@ while 1:
         pygame.display.update()
         clock.tick(60)
 
-    while question_time:
-        
+    while question_time:      
         grid_drawn_flag = False
         if show_timer_flag:
             timer.show()
-        
         if show_question_flag:
             print("Current Selected",current_selected)
             timer.start()
@@ -301,6 +305,6 @@ while 1:
                             team_scores[selected_team_index]=team_scores[selected_team_index]-board_matrix[r][c]
                             selected_team_index = col
                             pane1.show_score()
-
+                            pane1.show_selected_box()
         pygame.display.update()
         clock.tick(60)
