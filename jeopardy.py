@@ -40,7 +40,6 @@ class Player(object):
 
 
 p1 = Player()
-p1.set_score(99)
 show_question_flag=False
 start_flag = False
 team_number = int(input("Number of teams: "))
@@ -132,7 +131,7 @@ class Pane(object):
 class Question(object):
     def __init__(self):
         pygame.init()
-        self.font = pygame.font.SysFont('Arial', 24)
+        self.font = pygame.font.SysFont('Open Sans', 32)
         pygame.display.set_caption('Box Test')
         self.screen = pygame.display.set_mode((width,height+200), 0, 32)
         self.screen.fill((white))
@@ -190,7 +189,7 @@ grid_drawn_flag = False
 selected_team_index=-1
 show_timer_flag = False
 
-while 1:
+while True:
     click_count=0
     clock.tick(60)
     while not question_time:
