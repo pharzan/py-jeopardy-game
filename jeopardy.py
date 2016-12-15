@@ -115,16 +115,15 @@ class Pane(object):
             self.screen.blit(self.font.render(str(score), True, (255,0,0)), (curser, 620))
             curser+=width/6
     def show_selected_box(self):
-        print('>>>>>>>',selected_team_index)
         self.show_score()
         self.rect = pygame.draw.rect(self.screen, (yellow), (selected_team_index*(width/6),600 , width/6, 100),2)
         
     def addText(self,pos,text):
-        print(pos,text)
+        # print(pos,text)
         x = pos[0]*width/6+10
         y= 100*pos[1]+35
         color = red
-        print('Y',y)
+        # print('Y',y)
         if y<100:
             color=yellow
 
@@ -219,7 +218,7 @@ while 1:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if team_selected:
-                    print('Board Time')        
+                    print('Board Time')
                     for col in range(7):
                         if(col*(width/6)<event.pos[0]<(col+1)*(width/6)):
                             # print('col',col)
@@ -268,7 +267,6 @@ while 1:
             show_timer_flag = True
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                print(event.pos[0],event.pos[1])
                 if event.pos[1]<600:
                     if event.pos[0]>500 and event.pos[0]<700 and show_timer_flag: 
                         print('Timer')
@@ -306,5 +304,6 @@ while 1:
                             selected_team_index = col
                             pane1.show_score()
                             pane1.show_selected_box()
+                            timer.start()
         pygame.display.update()
         clock.tick(60)
