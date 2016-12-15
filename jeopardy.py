@@ -105,18 +105,19 @@ class Pane(object):
         pygame.draw.rect(self.screen, (black), (row*(width/6), col*100, width/6, 100))
         
     def show_score(self):
-        curser=0
+        curser=10
         self.rect = pygame.draw.rect(self.screen, (grey), (0,600 , width, 100))
         for team in team_names:
-            self.screen.blit(self.font.render(team, True, (255,0,0)), (curser, 600))
+            self.screen.blit(self.font.render(team, True, (255,0,0)), (curser, 610))
             curser+=width/6
-        curser=0
+        curser=10
         for score in team_scores:
-            self.screen.blit(self.font.render(str(score), True, (255,0,0)), (curser, 620))
+            self.screen.blit(self.font.render(str(score), True, (255,0,0)), (curser, 640))
             curser+=width/6
     def show_selected_box(self):
         self.show_score()
-        self.rect = pygame.draw.rect(self.screen, (yellow), (selected_team_index*(width/6),600 , width/6, 100),2)
+        self.rect = pygame.draw.rect(self.screen, (red), (selected_team_index*(width/6),600 , width/6, 100),3)
+        self.rect = pygame.draw.rect(self.screen, (red), (selected_team_index*(width/6),700 , width/6, 100))
         
     def addText(self,pos,text):
         # print(pos,text)
@@ -126,15 +127,8 @@ class Pane(object):
         # print('Y',y)
         if y<100:
             color=yellow
-
         self.screen.blit(self.font.render(str(text), True, color), (x, y))
         
-        # for x,header in enumerate(headers):
-        #     print(curser)
-        #     self.screen.blit(self.font.render(header, True, (255,0,0)), (curser, 100))
-        #     curser+=width/6
-        #     pygame.display.update()
-
 class Question(object):
     def __init__(self):
         pygame.init()
@@ -152,10 +146,6 @@ class Question(object):
             print("TEXT TOOO LONG!!!")
         print('SHOW QUESTION:',r,c)
         self.screen.blit(self.font.render(q, True, (255,0,0)), (width/2-(sizeX/2), height/2))
-        # timer_box:
-        # self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
-
-        # curser+=width/6
         pygame.display.update()
 
     def show_answer(self,text):
