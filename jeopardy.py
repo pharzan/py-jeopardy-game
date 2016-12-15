@@ -3,7 +3,7 @@ import pandas as pd
 import pygame
 import time
 from pygame.locals import *
-
+MAX_TIME_LIMIT = 20
 if not pygame.font: print ('Warning, fonts disabled')
 if not pygame.mixer: print ('Warning, sound disabled')
 df = pd.read_csv('qset1.csv',header=0)
@@ -24,40 +24,18 @@ for i,row in enumerate(df['Row']):
 for i,cat in enumerate(range(6)):
     board_matrix[0][i]=df['Categories'][i]
 
-    # headers.append(str(df['Categories'][i]))
-
-# q={
-#     'categories':['Hello'],
-#     (1,0):{"question":'What color is the sky?', "answer":'blue'},
-#     (2,0):{"question":'When do people do when they wake up?', "answer":'take a shower'},
-#     (3,0):{"question":'Question 000', "answer":'blue'},
-#     (4,0):{"question":'Question 000', "answer":'blue'},
-#     (5,0):{"question":'Question 000', "answer":'pharzan'},
-
-#     (1,1):{"question":'What color is the sky?', "answer":'blue'},
-#     (2,1):{"question":'When do people do when they wake up?', "answer":'take a shower'},
-#     (3,1):{"question":'Question 000', "answer":'pharzan'},
-#     (4,1):{"question":'Question 000', "answer":'pharzan'},
-#     (5,1):{"question":'Question 000', "answer":'pharzan'},
-#     (5,5):{"question":'okdfjahkdjasnmasdkj dkasjfhf',"answer" :'ksahdksahdkjsadh'}
-#     }
-
 class Player(object):
-    def __init__(self,team_name,players):
+    def __init__(self):
         self.score = 0
-        self.team_name=team_name
-        self.players = players
+        # self.team_name=team_name
+        # self.players = players
 
     def set_score(self,score):
         self.score = score
 
 
-p1 = Player('hello',['a','b','c','s'])
+p1 = Player()
 p1.set_score(99)
-
-
-# print(p1.score,p1.team_name,p1.players)
-
 show_question_flag=False
 start_flag = False
 team_number = int(input("Number of teams: "))
@@ -70,8 +48,7 @@ for i in range(team_number):
     team_names.append(name)
     team_scores.append(0)
 
-print(team_names)
-
+# print(team_names)
 pygame.init()
 gameDisplay = pygame.display.set_mode((800,600))
 pygame.display.set_caption('Jeoprady by Pharzan')
@@ -113,7 +90,6 @@ class Pane(object):
             curser=width/6
             for x,header in enumerate(range(6)):
                 self.rect = pygame.draw.rect(self.screen, (black), (0, row*100, curser, 100),2)
-        
                 curser+=width/6
                 # pygame.display.update()
         pygame.display.update()
@@ -123,6 +99,7 @@ class Pane(object):
         
     def show_score(self):
         curser=0
+        self.rect = pygame.draw.rect(self.screen, (grey), (0,600 , width, 100))
         for team in team_names:
             self.screen.blit(self.font.render(team, True, (255,0,0)), (curser, 600))
             curser+=width/6
@@ -185,25 +162,24 @@ class Timer(object):
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((width,800), 0, 32)
-        self.font = pygame.font.SysFont('Arial', 24)
+        self.font = pygame.font.SysFont('Arial', 32)
         self.timer_x_pos=(width/2)-(width/12)
         self.timer_y_pos=width/6
         self.counter=0
         self.startTime=0
-        # self.rect = pygame.draw.rect(self.screen, (blue), ((width/2)-(width/12), 500, width/6, 100))
-        # self.screen = pygame.display.set_mode((width,height+200), 0, 32)
-        # self.screen.fill((white))
-        # pygame.display.update()
+        self.elapsed=0
+
     def start(self):
         self.startTime = time.clock()
+
     def show(self):
-        elapsed = round(time.clock()-self.startTime,1)
+        self.elapsed = round(time.clock()-self.startTime,1)
         self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, 500, self.timer_y_pos, 100))
-        self.screen.blit(self.font.render(str(elapsed), True, (255,0,0)), (self.timer_x_pos,500))
-        self.counter+=1
-        print(round(time.clock()-self.startTime,2))
-    def reset():
-        self.startTime = time.clock()
+        self.screen.blit(self.font.render(str(self.elapsed), True, (255,255,0)), (self.timer_x_pos+25,550))
+        if self.elapsed >= MAX_TIME_LIMIT:
+            pygame.mixer.music.load('buzzer2.wav')
+            pygame.mixer.music.play()
+            timer.start()
 
 current_selected=[0,0]
 team_selected = False
@@ -212,11 +188,9 @@ pane1= Pane()
 question_screen = Question()
 timer = Timer()
 grid_drawn_flag = False
-# headers=['The Dianasours','Notable Women','Oxford Dictionary', 'Belguim', 'Composer By Countary', 'Name That Instrument']
-question=['What is your name?']
-# pane1.draw_grid(headers)
-# pane1.addText(headers)
 selected_team_index=-1
+show_timer_flag = False
+
 while 1:
     click_count=0
     clock.tick(60)
@@ -244,11 +218,11 @@ while 1:
                                 if(row*(height/6)<event.pos[1]<(row+1)*(height/6)):
                                     r = row
                                     print('Clicked on:',r,c,'SCORE:',board_matrix[r][c])
-                                    show_question_flag=True
+                                    show_question_flag = True
                                     if (r,c) not in already_selected:
                                         already_selected.append((r,c))
-                                        current_selected=[r,c]
-                                        question_time=True
+                                        current_selected = [r,c]
+                                        question_time = True
                                     else:
                                         print('already selected')
                 else:
@@ -269,7 +243,8 @@ while 1:
     while question_time:
         
         grid_drawn_flag = False
-        timer.show()
+        if show_timer_flag:
+            timer.show()
         
         if show_question_flag:
             print("Current Selected",current_selected)
@@ -281,13 +256,20 @@ while 1:
                 print('No Question Found For Position')
             question_screen.show(question)
             show_question_flag = False
+            show_timer_flag = True
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                print(event.pos[0],event.pos[1])
                 if event.pos[1]<600:
+                    if event.pos[0]>500 and event.pos[0]<700 and show_timer_flag: 
+                        print('Timer')
+                        timer.start()
+                        break
                     click_count+=1
                     # question_screen.show_answer()
                     print(q[r,c]['answer'])
                     question_screen.show_answer(q[r,c]['answer'])
+                    show_timer_flag = False
                     print("Selected Question",c,r,"Points:",board_matrix[c][r],'Click Count:',click_count)
                     print("Question Time")
                     if click_count==2:
@@ -303,11 +285,17 @@ while 1:
                         pane1.draw_grid_flag = True
                         click_count = 0
                 else:
+                    print('NEW TEAM SELECT MODE!')
                     for col in range(6):
                         if(col*(width/6)<event.pos[0]<(col+1)*(width/6) and event.pos[1]>600):
                             # answering_team = teams[col]
-                            print('Selected Team:',col, 'Selected Team Name:',team_names[col],'score',team_scores[col])
+                            print('New Selected Team:',col, 'Selected Team Name:',team_names[col],
+                                  'score',team_scores[col],
+                                  'Previous selected team score',team_scores[selected_team_index],
+                                  'Score:',board_matrix[r][c])
+                            team_scores[selected_team_index]=team_scores[selected_team_index]-board_matrix[r][c]
                             selected_team_index = col
-                    print('NEW TEAM SELECT MODE!')
+                            pane1.show_score()
+
         pygame.display.update()
         clock.tick(60)
