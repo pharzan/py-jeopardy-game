@@ -121,30 +121,37 @@ class Panel(object):
 						return selected
 
 		print(x,y)
+
 	def show_question(self,q):
 		question_txt = q['question']
 
 		sizeX, sizeY = self.font.size(question_txt)
 		self.rect = pygame.draw.rect(self.screen, (black), (0, 0, Width, Height))
 		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
-		
+
+	def clear_screen(self,color):
+		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
 gamePanel = Panel()
-gamePanel.draw_grid()
-
 while True:
+	print(Mode)	
 	for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and Mode=="board_time":
-            	Mode="question_time"
-            	selected_question = gamePanel.clicked(event.pos)
-            	gamePanel.show_question(selected_question)
-            	print(selected_question)
 
-            if event.type == pygame.MOUSEBUTTONDOWN and Mode=="question_time":
+		if event.type == pygame.MOUSEBUTTONDOWN and Mode=="question_time":
+			Mode="board_time"
+			selected_question = gamePanel.clicked(event.pos)
+			gamePanel.show_question(selected_question)
+			print(selected_question)
+		elif event.type == pygame.MOUSEBUTTONDOWN and Mode=="board_time":
+			Mode="question_time"
+			gamePanel.clear_screen(white)
+			gamePanel.draw_grid()
 
-            	print("question Time")
-
+		
+		
+			
+	
 	pygame.display.update()
 	clock.tick(60)
+    	
+
