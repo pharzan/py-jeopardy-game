@@ -7,6 +7,7 @@ The rows begin from one since row 0 is dedicated to categories stored under the 
 | --- |:---:| -------------:|-------:|-----------:|
 | 1   | 0   | Some Question | ANS    | CAT 0      |
 
+
 This method can be used in the classroom for any subject and as tool for review or teaching new material.
 
 ## Prerequisites:
