@@ -74,7 +74,7 @@ def make_board_matrix():
 	for i in range(Rows):
 		temp = []
 		for j in range(Cols):
-			cell = Cell(i,j)
+			cell = Cell(j,i)
 			temp.append(cell)
 			cell.set_content(questions[i,j])
 		board_matrix.append(temp)
@@ -112,7 +112,7 @@ class Panel(object):
 			for j,cell in enumerate(board_matrix[i]):
 				if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
 					if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
-						print('hello')
+						print(board_matrix[j][i].content)
 
 
 		print(x,y)
