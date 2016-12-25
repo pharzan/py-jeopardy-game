@@ -73,19 +73,20 @@ def make_board_matrix():
 	board_matrix.append(temp)
 	for i in range(Rows):
 		temp = []
-		for j in range(Cols):
+		for j in range(Cols+1):
 			cell = Cell(j,i)
 			temp.append(cell)
 			cell.set_content(questions[i,j])
+		
 		board_matrix.append(temp)
 	return board_matrix
 
 questions, Rows, Cols, Cats = read_question_file(question_file)
 board_matrix = make_board_matrix()
-
-for row in board_matrix:
-	for cell in row:
-		print(cell.xPos,cell.yPos,cell.content)
+print(board_matrix[1][5].content)
+# for row in board_matrix:
+# 	for cell in row:
+# 		print(cell.xPos,cell.yPos,cell.content)
 
 class Panel(object):
 	def __init__(self):
