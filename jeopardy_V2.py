@@ -4,6 +4,7 @@ import pygame
 import time
 from pygame.locals import *
 # Constants:
+Mode="board_time"
 Time_Limit = 60
 Width, Height = 1200,800
 question_file = 'qset1_backup'
@@ -57,9 +58,12 @@ def read_question_file(question_file):
 		question = str(df["Question"][i])
 		answer = str(df["Answer"][i])
 		score = int(df["Score"][i])
-		q[(row,df['Col'][i])]={"question":question,"answer":answer,"score":score}
+		category = str(df["Categories"][i])
+		q[(row,df['Col'][i])]={"question":question,"answer":answer,"score":score, "category":category}
 	Rows,Cols = int(df['Rows'][0]),int(df['Cols'][0])
-	for i,cat in enumerate(range(6)):
+	for i in range(0,30,5):
+		print(i)
+		print(df['Categories'][i])
 		Cats.append(df['Categories'][i])
 	return q, Rows, Cols, Cats
 
@@ -113,19 +117,34 @@ class Panel(object):
 			for j,cell in enumerate(board_matrix[i]):
 				if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
 					if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
-						print(board_matrix[j][i].content)
-
+						selected = board_matrix[j][i].content
+						return selected
 
 		print(x,y)
+	def show_question(self,q):
+		question_txt = q['question']
+
+		sizeX, sizeY = self.font.size(question_txt)
+		self.rect = pygame.draw.rect(self.screen, (black), (0, 0, Width, Height))
+		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
+		
+
 gamePanel = Panel()
 gamePanel.draw_grid()
+
 while True:
 	for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-            	gamePanel.clicked(event.pos)
+            if event.type == pygame.MOUSEBUTTONDOWN and Mode=="board_time":
+            	Mode="question_time"
+            	selected_question = gamePanel.clicked(event.pos)
+            	gamePanel.show_question(selected_question)
+            	print(selected_question)
 
+            if event.type == pygame.MOUSEBUTTONDOWN and Mode=="question_time":
+
+            	print("question Time")
 
 	pygame.display.update()
 	clock.tick(60)
