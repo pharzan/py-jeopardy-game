@@ -6,7 +6,7 @@ from pygame.locals import *
 # Constants:
 Mode="board_time"
 Time_Limit = 60
-Width, Height = 1200,800
+Width, Height = 1400,900
 question_file = 'qset1_backup'
 Rows, Cols = 0,0
 Cats = []
@@ -109,7 +109,8 @@ class Panel(object):
 					print(cell.content['score'],cell.content['question'])
 					self.screen.blit(self.font.render(str(cell.content['score']), True, black), (j*Width/6, i*Height/8))
 				except:
-					print("exception")
+					print(">>>>>>>",str(cell.content))
+					self.screen.blit(self.font.render(str(cell.content), True, red), (j*Width/6, i*Height/8))
 		pygame.display.update()
 	def clicked(self,pos):
 		x,y =pos[0], pos[1]
@@ -134,22 +135,20 @@ class Panel(object):
 
 gamePanel = Panel()
 while True:
-	print(Mode)	
+	print(Mode)
 	for event in pygame.event.get():
-
-		if event.type == pygame.MOUSEBUTTONDOWN and Mode=="question_time":
-			Mode="board_time"
-			selected_question = gamePanel.clicked(event.pos)
-			gamePanel.show_question(selected_question)
-			print(selected_question)
-		elif event.type == pygame.MOUSEBUTTONDOWN and Mode=="board_time":
-			Mode="question_time"
-			gamePanel.clear_screen(white)
-			gamePanel.draw_grid()
-
-		
-		
-			
+		if Mode=="question_time":
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				Mode="board_time"
+				selected_question = gamePanel.clicked(event.pos)
+				gamePanel.show_question(selected_question)
+				print(selected_question)
+		elif Mode=="board_time":
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				Mode="question_time"
+				gamePanel.clear_screen(white)
+				gamePanel.draw_grid()
+				pygame.display.update()
 	
 	pygame.display.update()
 	clock.tick(60)
