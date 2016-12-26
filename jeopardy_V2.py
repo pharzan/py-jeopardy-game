@@ -41,22 +41,27 @@ class Cell(object):
 class Timer(object):
     def __init__(self):
         pygame.init()
-        
         self.screen = pygame.display.set_mode((Width,Height), 0, 32)
         self.font = pygame.font.SysFont('Arial', 32)
-        self.timer_x_pos=(Width/2)-(Width/12)
-        self.timer_y_pos=Width/6
+        self.timer_y_pos=0 # top
+        self.box_width = Width/6 #set to middle of screen
+        self.box_height = 100
+        self.timer_x_pos = Width/2 - self.box_width/2
         self.counter=0
         self.startTime=0
         self.elapsed=0
-
     def start(self):
         self.startTime = time.clock()
-
     def show(self):
+    	
         self.elapsed = round(time.clock() - self.startTime,1)
-        self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, 500, self.timer_y_pos, 100))
-        self.screen.blit(self.font.render(str(self.elapsed), True, yellow), (self.timer_x_pos+25,550))
+        elapsed = str(self.elapsed)
+        sizeX, sizeY = self.font.size(elapsed)
+        
+        middle_X = self.timer_x_pos+self.box_width/2-sizeX/2
+        middle_Y = self.box_height/2-sizeY/2
+        self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, self.timer_y_pos, self.box_width, self.box_height))
+        self.screen.blit(self.font.render(elapsed, True, yellow), (middle_X, middle_Y))
         if self.elapsed >= Time_Limit:
             pygame.mixer.music.load('buzzer2.wav')
             pygame.mixer.music.play()
@@ -136,11 +141,9 @@ class Panel(object):
 		# print(x,y)
 	def show_question(self,q):
 		question_txt = q['question']
-
 		sizeX, sizeY = self.font.size(question_txt)
 		self.rect = pygame.draw.rect(self.screen, (black), (0, 0, Width, Height))
 		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
-
 	def clear_screen(self,color):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
