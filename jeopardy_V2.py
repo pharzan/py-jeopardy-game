@@ -150,23 +150,21 @@ gamePanel = Panel()
 timer = Timer()
 
 while True:
-		# if Mode=="board_time":
-		# 	gamePanel.clear_screen(white)
-		# 	gamePanel.draw_grid()
+		# Mouse events and mode change
 		for event in pygame.event.get():
-			print(Mode)
 			if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='board_time':
-				Mode = 'question_time'
 				selected_question = gamePanel.clicked(event.pos)
+				timer.start()
+				Mode = 'question_time'
 			elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
 				Mode = 'board_time'
-
-			if Mode == 'board_time':
-				gamePanel.clear_screen(white)
-				gamePanel.draw_grid()
-
-			if Mode == 'question_time':
-				gamePanel.show_question(selected_question)
+		# game process:
+		if Mode == 'board_time':
+			gamePanel.clear_screen(white)
+			gamePanel.draw_grid()
+		if Mode == 'question_time':
+			gamePanel.show_question(selected_question)
+			timer.show()
 				
 				
 		
