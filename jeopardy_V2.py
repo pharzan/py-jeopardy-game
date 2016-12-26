@@ -5,7 +5,7 @@ import time
 from pygame.locals import *
 # Constants:
 Time_Limit= 60
-Mode="board_time"
+Mode="main_menu"
 Time_Limit = 60
 Width, Height = 1200,800
 question_file = 'qset1_backup'
@@ -53,11 +53,9 @@ class Timer(object):
     def start(self):
         self.startTime = time.clock()
     def show(self):
-    	
         self.elapsed = round(time.clock() - self.startTime,1)
         elapsed = str(self.elapsed)
         sizeX, sizeY = self.font.size(elapsed)
-        
         middle_X = self.timer_x_pos+self.box_width/2-sizeX/2
         middle_Y = self.box_height/2-sizeY/2
         self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, self.timer_y_pos, self.box_width, self.box_height))
@@ -66,7 +64,47 @@ class Timer(object):
             pygame.mixer.music.load('buzzer2.wav')
             pygame.mixer.music.play()
             timer.start()
+    def check_click(self,pos):
+    	#check click on timer
+    	return False
 
+class Panel(object):
+	def __init__(self):
+		pygame.init()
+		self.font = pygame.font.SysFont('Arial', 18)
+		pygame.display.set_caption('Jeopardy board game')
+		self.screen = pygame.display.set_mode((Width,Height), 0, 32)	
+		self.screen.fill((white))
+		pygame.display.update()
+	def draw_grid(self):
+		for i,col in enumerate(board_matrix):
+			for j,cell in enumerate(board_matrix[i]):
+				self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8),2)
+				try:	
+					self.screen.blit(self.font.render(str(cell.content['score']), True, black), (j*Width/6, i*Height/8))
+				except:
+					self.screen.blit(self.font.render(str(cell.content), True, red), (j*Width/6, i*Height/8))
+		pygame.display.update()
+	def clicked(self,pos):
+		x,y =pos[0], pos[1]
+		for i,col in enumerate(board_matrix):
+			for j,cell in enumerate(board_matrix[i]):
+				if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
+					if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
+						selected = board_matrix[j][i].content
+						return selected
+	def show_question(self,q):
+		question_txt = q['question']
+		sizeX, sizeY = self.font.size(question_txt)
+		self.rect = pygame.draw.rect(self.screen, (black), (0, 0, Width, Height))
+		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
+	def clear_screen(self,color):
+		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
+
+class Players(object):
+	def __init__(self):
+		self.teams = 0
+		self.team_names = []
 
 def read_question_file(question_file):
 	q={}
@@ -105,51 +143,9 @@ def make_board_matrix():
 
 questions, Rows, Cols, Cats = read_question_file(question_file)
 board_matrix = make_board_matrix()
-print(board_matrix[1][5].content)
-# for row in board_matrix:
-# 	for cell in row:
-# 		print(cell.xPos,cell.yPos,cell.content)
-
-class Panel(object):
-	def __init__(self):
-		pygame.init()
-		self.font = pygame.font.SysFont('Arial', 18)
-		pygame.display.set_caption('Jeopardy board game')
-		self.screen = pygame.display.set_mode((Width,Height), 0, 32)	
-		self.screen.fill((white))
-		pygame.display.update()
-	def draw_grid(self):
-		# print(len(board_matrix),len(board_matrix[0]))
-		for i,col in enumerate(board_matrix):
-			for j,cell in enumerate(board_matrix[i]):
-				self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8),2)
-				try:	
-					# print(cell.content['score'],cell.content['question'])
-					self.screen.blit(self.font.render(str(cell.content['score']), True, black), (j*Width/6, i*Height/8))
-				except:
-					# print(">>>>>>>",str(cell.content))
-					self.screen.blit(self.font.render(str(cell.content), True, red), (j*Width/6, i*Height/8))
-		pygame.display.update()
-	def clicked(self,pos):
-		x,y =pos[0], pos[1]
-		for i,col in enumerate(board_matrix):
-			for j,cell in enumerate(board_matrix[i]):
-				if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
-					if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
-						selected = board_matrix[j][i].content
-						return selected
-		# print(x,y)
-	def show_question(self,q):
-		question_txt = q['question']
-		sizeX, sizeY = self.font.size(question_txt)
-		self.rect = pygame.draw.rect(self.screen, (black), (0, 0, Width, Height))
-		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
-	def clear_screen(self,color):
-		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
-
 gamePanel = Panel()
 timer = Timer()
-
+players = Players()
 while True:
 	# Mouse events and mode change
 	for event in pygame.event.get():
@@ -158,7 +154,8 @@ while True:
 			timer.start()
 			Mode = 'question_time'
 		elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
-			Mode = 'board_time'
+			if not timer.check_click(event.pos):
+				Mode = 'board_time'
 		# game process:
 	if Mode == 'board_time':
 		gamePanel.clear_screen(white)
@@ -166,5 +163,16 @@ while True:
 	if Mode == 'question_time':
 		gamePanel.show_question(selected_question)
 		timer.show()
+	if Mode == 'main_menu':
+		players.teams = int(input("Number of teams: "))
+		for i,team in enumerate(range(players.teams)):
+			name = input('Team '+str(i+1)+' name? ')
+			players.team_names.append(name)
+		Mode = 'board_time'
+	if event.type == QUIT:
+		pygame.display.quit()
+		sys.exit()
+
+
 	pygame.display.update()
 	clock.tick(60)
