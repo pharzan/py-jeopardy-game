@@ -4,9 +4,10 @@ import pygame
 import time
 from pygame.locals import *
 # Constants:
+Time_Limit= 60
 Mode="board_time"
 Time_Limit = 60
-Width, Height = 1400,900
+Width, Height = 1200,800
 question_file = 'qset1_backup'
 Rows, Cols = 0,0
 Cats = []
@@ -49,6 +50,31 @@ class Cell(object):
 		self.score = 0
 	def set_content(self,cell_text):
 		self.content = cell_text
+
+class Timer(object):
+    def __init__(self):
+        pygame.init()
+        
+        self.screen = pygame.display.set_mode((Width,Height), 0, 32)
+        self.font = pygame.font.SysFont('Arial', 32)
+        self.timer_x_pos=(Width/2)-(Width/12)
+        self.timer_y_pos=Width/6
+        self.counter=0
+        self.startTime=0
+        self.elapsed=0
+
+    def start(self):
+        self.startTime = time.clock()
+
+    def show(self):
+        self.elapsed = round(time.clock() - self.startTime,1)
+        self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, 500, self.timer_y_pos, 100))
+        self.screen.blit(self.font.render(str(self.elapsed), True, yellow), (self.timer_x_pos+25,550))
+        if self.elapsed >= Time_Limit:
+            pygame.mixer.music.load('buzzer2.wav')
+            pygame.mixer.music.play()
+            timer.start()
+
 
 def read_question_file(question_file):
 	q={}
@@ -134,22 +160,28 @@ class Panel(object):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
 gamePanel = Panel()
+timer = Timer()
+
 while True:
 	print(Mode)
+	if Mode=="board_time":
+		timer.show()
 	for event in pygame.event.get():
 		if Mode=="question_time":
-			if event.type == pygame.MOUSEBUTTONDOWN:
+			timer.start()
+			if event.type == pygame.MOUSEBUTTONDOWN or Mode=="board_time":
 				Mode="board_time"
 				selected_question = gamePanel.clicked(event.pos)
 				gamePanel.show_question(selected_question)
 				print(selected_question)
 		elif Mode=="board_time":
+			
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				Mode="question_time"
 				gamePanel.clear_screen(white)
 				gamePanel.draw_grid()
 				pygame.display.update()
-	
+			pygame.display.update()
 	pygame.display.update()
 	clock.tick(60)
     	
