@@ -133,9 +133,7 @@ class Panel(object):
 					if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
 						selected = board_matrix[j][i].content
 						return selected
-
 		# print(x,y)
-
 	def show_question(self,q):
 		question_txt = q['question']
 
@@ -150,23 +148,20 @@ gamePanel = Panel()
 timer = Timer()
 
 while True:
-		# Mouse events and mode change
-		for event in pygame.event.get():
-			if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='board_time':
-				selected_question = gamePanel.clicked(event.pos)
-				timer.start()
-				Mode = 'question_time'
-			elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
-				Mode = 'board_time'
+	# Mouse events and mode change
+	for event in pygame.event.get():
+		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='board_time':
+			selected_question = gamePanel.clicked(event.pos)
+			timer.start()
+			Mode = 'question_time'
+		elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
+			Mode = 'board_time'
 		# game process:
-		if Mode == 'board_time':
-			gamePanel.clear_screen(white)
-			gamePanel.draw_grid()
-		if Mode == 'question_time':
-			gamePanel.show_question(selected_question)
-			timer.show()
-				
-				
-		
-		pygame.display.update()
-		clock.tick(60)
+	if Mode == 'board_time':
+		gamePanel.clear_screen(white)
+		gamePanel.draw_grid()
+	if Mode == 'question_time':
+		gamePanel.show_question(selected_question)
+		timer.show()
+	pygame.display.update()
+	clock.tick(60)
