@@ -35,6 +35,7 @@ class Cell(object):
 		self.yPos = yPos
 		self.content = ''
 		self.score = 0
+		self.selected = False
 	def set_content(self,cell_text):
 		self.content = cell_text
 
@@ -79,20 +80,28 @@ class Panel(object):
 	def draw_grid(self):
 		for i,col in enumerate(board_matrix):
 			for j,cell in enumerate(board_matrix[i]):
+				if cell.selected:
+					self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8))	
+				
 				self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8),2)
 				try:	
 					self.screen.blit(self.font.render(str(cell.content['score']), True, black), (j*Width/6, i*Height/8))
 				except:
-					self.screen.blit(self.font.render(str(cell.content), True, red), (j*Width/6, i*Height/8))
+					self.screen.blit(self.font.render(str(cell.content), True, black), (j*Width/6, i*Height/8))
 		pygame.display.update()
 	def clicked(self,pos):
 		x,y =pos[0], pos[1]
 		for i,col in enumerate(board_matrix):
 			for j,cell in enumerate(board_matrix[i]):
-				if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
-					if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
-						selected = board_matrix[j][i].content
-						return selected
+				if not cell.selected:
+					if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
+						if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
+							selected = board_matrix[j][i].content
+							cell.selected = True
+							return selected
+		return False
+					
+
 	def show_question(self,q):
 		question_txt = q['question']
 		sizeX, sizeY = self.font.size(question_txt)
@@ -101,10 +110,18 @@ class Panel(object):
 	def clear_screen(self,color):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
-class Players(object):
-	def __init__(self):
-		self.teams = 0
+class Team(object):
+	def __init__(self,teams):
+		self.players=Team.Players()
 		self.team_names = []
+		self.number_of_teams = teams
+	class Players(object):
+		def __init__(self):
+			self.teams = 0
+			self.scores = 0
+	def set_name(self,name):
+		name = str(name)
+		self.team_names.append(name)
 
 def read_question_file(question_file):
 	q={}
@@ -145,14 +162,17 @@ questions, Rows, Cols, Cats = read_question_file(question_file)
 board_matrix = make_board_matrix()
 gamePanel = Panel()
 timer = Timer()
-players = Players()
+
+# players = Players()
+
 while True:
 	# Mouse events and mode change
 	for event in pygame.event.get():
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='board_time':
 			selected_question = gamePanel.clicked(event.pos)
 			timer.start()
-			Mode = 'question_time'
+			if selected_question!= False:
+				Mode = 'question_time'
 		elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
 			if not timer.check_click(event.pos):
 				Mode = 'board_time'
@@ -164,15 +184,15 @@ while True:
 		gamePanel.show_question(selected_question)
 		timer.show()
 	if Mode == 'main_menu':
-		players.teams = int(input("Number of teams: "))
-		for i,team in enumerate(range(players.teams)):
-			name = input('Team '+str(i+1)+' name? ')
-			players.team_names.append(name)
+		number_of_teams = int(input("Number of teams: "))
+		teams = Team(number_of_teams)
+		for i,team in enumerate(range(number_of_teams)):
+			print(teams)
+			# name = input('Team '+ str(i+1)+' name? ')
+			# players.team_names.append(name)
 		Mode = 'board_time'
 	if event.type == QUIT:
 		pygame.display.quit()
 		sys.exit()
-
-
 	pygame.display.update()
 	clock.tick(60)
