@@ -77,19 +77,32 @@ class Panel(object):
 		self.screen = pygame.display.set_mode((Width,Height), 0, 32)	
 		self.screen.fill((white))
 		pygame.display.update()
+
+	def center(self,txt,box_width,box_height):
+		sizeX, sizeY = self.font.size(txt)
+		middle_X = Width/6+Width/12
+		middle_Y = box_height/2-sizeY/2
+		return middle_X, middle_Y
 	def draw_grid(self):
+		text=''
 		for i,col in enumerate(board_matrix):
 			for j,cell in enumerate(board_matrix[i]):
 				if cell.selected:
-					self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8))	
-				
+					self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8))
 				self.rect = pygame.draw.rect(self.screen, (black), (i*Width/6, j*Height/8, Width/6, Height/8),2)
-				try:	
-					self.screen.blit(self.font.render(str(cell.content['score']), True, black), (j*Width/6, i*Height/8))
+				try:
+					text = str(cell.content['score'])
+					sizeX, sizeY = self.font.size(text)
+					self.screen.blit(self.font.render(text, True, black), (j*Width/6+((Width/12)-sizeX), i*Height/8+((Height/16)-sizeY)))
 				except:
-					self.screen.blit(self.font.render(str(cell.content), True, black), (j*Width/6, i*Height/8))
+					text = str(cell.content)
+					sizeX, sizeY = self.font.size(text)
+					self.screen.blit(self.font.render(text, True, black), (j*Width/6, i*Height/8))
+
+				
 		pygame.display.update()
 	def clicked(self,pos):
+		# Returns false if already selected
 		x,y =pos[0], pos[1]
 		for i,col in enumerate(board_matrix):
 			for j,cell in enumerate(board_matrix[i]):
