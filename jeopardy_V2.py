@@ -132,7 +132,9 @@ class Panel(object):
 		if cell.xPos<pos[0]<width:
 			if(cell.yPos<pos[1]<height):
 				print('cell Clicked')
-				
+				return True
+		else:
+			return False
 	def show_question(self,q):
 		done_flag = False
 		question_txt = q['question']
@@ -140,12 +142,16 @@ class Panel(object):
 		self.clear_screen(black)
 		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
 		pygame.display.update()
-		success = Cell(Width/8,Height-2*Height/6)
-		success.color = green
+		success = Cell(Width/6,Height-2*Height/6)
 		success.width = Width/6
 		success.height = Height/8
 		success.background = green
+		fail = Cell(Width-2*Width/6,Height-2*Height/6)
+		fail.width = Width/6
+		fail.height = Height/8
+		fail.background = red
 		self.show_cell(success)
+		self.show_cell(fail)
 		while not done_flag:
 			timer.show()
 			pygame.display.update()
@@ -153,6 +159,7 @@ class Panel(object):
 
 				if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 					self.check_click(success,event.pos)
+					self.check_click(fail,event.pos)
 					# in question click detection
 					# return "board_time"
 			
