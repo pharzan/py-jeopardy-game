@@ -87,7 +87,7 @@ class Panel(object):
 		middle_Y = box_height/2-sizeY/2
 		return middle_X, middle_Y
 	def show_teams(self):
-		print(teams.selected,teams.scores[teams.selected])
+		# print(teams.selected,teams.scores[teams.selected])
 		for i,name in enumerate(teams.names):
 			text = str(name)
 			self.screen.blit(self.font.render(text, True, black), (i*Width/6, 6*Height/8))
@@ -113,30 +113,34 @@ class Panel(object):
 					self.screen.blit(self.font.render(text, True, black), (j*Width/6, i*Height/8))				
 		pygame.display.update()
 
-	def reset_team_select(self):
-			teams.selected = False
-
 	def clicked(self,pos):
 		# Returns false if already selected
-		question_type = 'normal'
-		path = ''
+		print('SELECTED TEAM',teams.selected)
 		x,y =pos[0], pos[1]
-		for i,col in enumerate(board_matrix):
-			for j,cell in enumerate(board_matrix[i]):
-				if not cell.selected:
-					if i*(Width/6)<x<(i+1)*(Width/6):
-						if(j*(Height/8)<y<(j+1)*(Height/8)):
-							selected = board_matrix[j][i].content
-							question_type = board_matrix[j][i].content['type']
-							path = board_matrix[j][i].content['path']
-							cell.selected = True
-							return selected, question_type, path
+		# if teams.selected == -1:
 		for i,team in enumerate(teams.names):
 			if i*(Width/6)<x<(i+1)*(Width/6):
 				if(6*(Height/8)<y<7*(Height/8)):
 					print('player')
 					return 'player_select',i,''
-		return False
+		
+		question_type = 'normal'
+		path = ''
+		if teams.selected != -1:
+			for i,col in enumerate(board_matrix):
+				for j,cell in enumerate(board_matrix[i]):
+					if not cell.selected:
+						if i*(Width/6)<x<(i+1)*(Width/6):
+							if(j*(Height/8)<y<(j+1)*(Height/8)):
+								selected = board_matrix[j][i].content
+								question_type = board_matrix[j][i].content['type']
+								path = board_matrix[j][i].content['path']
+								cell.selected = True
+								return selected, question_type, path
+		return '','',''
+				
+			
+		
 	def show_cell(self,cell):
 		print('show',cell.width)
 		self.rect = pygame.draw.rect(self.screen, (cell.background), (cell.xPos, cell.yPos, cell.width, cell.height))
@@ -169,23 +173,28 @@ class Panel(object):
 		fail.background = red
 		self.show_cell(success)
 		self.show_cell(fail)
+		go = False
 		while not done_flag:
 			timer.show()
 			pygame.display.update()
 			for event in pygame.event.get():
 
 				if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
 					result = self.check_click(success,event.pos)
-					if teams.selected!=False:
-						if result:
-							teams.scores[teams.selected]+=q['score']
-							# print(teams.selected,q['score'])
-						else:
-							result = self.check_click(fail,event.pos)
-							teams.scores[teams.selected]-=q['score']
+					if result:
+						teams.scores[teams.selected]+=q['score']
+						go = True
+
+					result = self.check_click(fail,event.pos)
+					if result:
+						teams.scores[teams.selected]-=q['score']
+						go = True
 					# in question click detection
-					self.reset_team_select()
-					return "board_time"
+				if go:
+					teams.reset_team_select()
+					return 'board_time'
+				
 	def show_picture_question(self,q,path):
 		self.clear_screen(black)
 		img = pygame.image.load(path)
@@ -211,7 +220,7 @@ class Team(object):
 		self.players=Team.Players()
 		self.names = []
 		self.count = teams
-		self.selected = False
+		self.selected = -1
 		self.scores = []
 		
 	class Players(object):
@@ -223,6 +232,8 @@ class Team(object):
 	def setup_scores(self):
 		for team in self.names:
 			self.scores.append(0)
+	def reset_team_select(self):
+			teams.selected = -1
 
 def read_question_file(question_file):
 	q={}
@@ -276,17 +287,20 @@ while True:
 	# Mouse events and mode change
 	
 	for event in pygame.event.get():
+
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='board_time':
+
 			selected_question, question_type, path = gamePanel.clicked(event.pos)
 			timer.start()
-			print(question_type)
+			
 			if selected_question == 'player_select':
 				team_number = question_type
 				teams.selected = team_number
 				print('player selected',team_number)
 				
 			else:
-				Mode = 'question_time'
+				if teams.selected != -1:
+			 		Mode = 'question_time'
 		# game process:
 	if Mode == 'board_time':
 		gamePanel.clear_screen(white)
