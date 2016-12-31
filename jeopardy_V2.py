@@ -121,10 +121,19 @@ class Panel(object):
 					
 
 	def show_question(self,q):
+		done_flag = False
 		question_txt = q['question']
 		sizeX, sizeY = self.font.size(question_txt)
 		self.clear_screen(black)
 		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
+		pygame.display.update()
+		while not done_flag:
+			for event in pygame.event.get():
+				if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+					# in question click detection
+					return "board_time"
+			
+			
 	def show_picture_question(self,q,path):
 		self.clear_screen(black)
 		img = pygame.image.load(path)
@@ -216,9 +225,9 @@ while True:
 			timer.start()
 			if selected_question!= False:
 				Mode = 'question_time'
-		elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
-			if not timer.check_click(event.pos):
-				Mode = 'board_time'
+		# elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='question_time':
+		# 	if not timer.check_click(event.pos):
+		# 		Mode = 'board_time'
 		# game process:
 	if Mode == 'board_time':
 		gamePanel.clear_screen(white)
@@ -232,7 +241,7 @@ while True:
 			Mode = gamePanel.show_audio_question(selected_question,path)
 		else:
 			print('Normal')
-			gamePanel.show_question(selected_question)
+			Mode = gamePanel.show_question(selected_question)
 		timer.show()
 	if Mode == 'main_menu':
 		number_of_teams = int(input("Number of teams: "))
