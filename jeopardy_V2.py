@@ -36,6 +36,7 @@ class Cell(object):
 		self.content = ''
 		self.score = 0
 		self.selected = False
+		self.type = ''
 	def set_content(self,cell_text):
 		self.content = cell_text
 
@@ -103,6 +104,8 @@ class Panel(object):
 		pygame.display.update()
 	def clicked(self,pos):
 		# Returns false if already selected
+		question_type = 'normal'
+		path = ''
 		x,y =pos[0], pos[1]
 		for i,col in enumerate(board_matrix):
 			for j,cell in enumerate(board_matrix[i]):
@@ -110,16 +113,23 @@ class Panel(object):
 					if i*(Width/6)<event.pos[0]<(i+1)*(Width/6):
 						if(j*(Height/8)<event.pos[1]<(j+1)*(Height/8)):
 							selected = board_matrix[j][i].content
+							question_type = board_matrix[j][i].content['type']
+							path = board_matrix[j][i].content['path']
 							cell.selected = True
-							return selected
+							return selected, question_type, path
 		return False
 					
 
 	def show_question(self,q):
 		question_txt = q['question']
 		sizeX, sizeY = self.font.size(question_txt)
-		self.rect = pygame.draw.rect(self.screen, (black), (0, 0, Width, Height))
+		self.clear_screen(black)
 		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
+	def show_picture_question(self,q,path):
+		self.clear_screen(black)
+		img = pygame.image.load(path)
+		self.screen.blit(img,(0,0))
+		# pygame.display.flip()
 	def clear_screen(self,color):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
@@ -145,11 +155,18 @@ def read_question_file(question_file):
 		answer = str(df["Answer"][i])
 		score = int(df["Score"][i])
 		category = str(df["Categories"][i])
-		q[(row,df['Col'][i])]={"question":question,"answer":answer,"score":score, "category":category}
+		t = str(df["Type"][i])
+		path = str(df["Path"][i])
+
+		q[(row,df['Col'][i])]={"question":question,
+								"answer":answer,
+								"score":score, 
+								"category":category, 
+								"type":t,
+								"path":path}
+
 	Rows,Cols = int(df['Rows'][0]),int(df['Cols'][0])
 	for i in range(0,30,5):
-		# print(i)
-		# print(df['Categories'][i])
 		Cats.append(df['Categories'][i])
 	return q, Rows, Cols, Cats
 
@@ -167,7 +184,6 @@ def make_board_matrix():
 			cell = Cell(j,i)
 			temp.append(cell)
 			cell.set_content(questions[i,j])
-		
 		board_matrix.append(temp)
 	return board_matrix
 
@@ -182,7 +198,7 @@ while True:
 	# Mouse events and mode change
 	for event in pygame.event.get():
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode=='board_time':
-			selected_question = gamePanel.clicked(event.pos)
+			selected_question, question_type, path = gamePanel.clicked(event.pos)
 			timer.start()
 			if selected_question!= False:
 				Mode = 'question_time'
@@ -194,7 +210,12 @@ while True:
 		gamePanel.clear_screen(white)
 		gamePanel.draw_grid()
 	if Mode == 'question_time':
-		gamePanel.show_question(selected_question)
+		if question_type == 'picture':
+			print('picture question')
+			gamePanel.show_picture_question(selected_question,path)
+		else:
+			print('Normal')
+			gamePanel.show_question(selected_question)
 		timer.show()
 	if Mode == 'main_menu':
 		number_of_teams = int(input("Number of teams: "))
