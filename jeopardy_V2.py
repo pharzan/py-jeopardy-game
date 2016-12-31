@@ -128,8 +128,22 @@ class Panel(object):
 	def show_picture_question(self,q,path):
 		self.clear_screen(black)
 		img = pygame.image.load(path)
-		self.screen.blit(img,(0,0))
+		X,Y = img.get_rect().size
+		self.screen.blit(img,(Width/2-X/2,Height/2-Y/2))
 		# pygame.display.flip()
+	def show_audio_question(self,q,path):
+		done_flag = False
+		self.clear_screen(black)
+		pygame.display.update()
+		sound = pygame.mixer.Sound(path)
+		# X,Y = img.get_rect().size
+		channel = sound.play()
+		while channel.get_busy():
+			pygame.time.wait(1)
+			print('playing')
+		return "board_time"
+		# pygame.display.flip()
+
 	def clear_screen(self,color):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
@@ -213,6 +227,9 @@ while True:
 		if question_type == 'picture':
 			print('picture question')
 			gamePanel.show_picture_question(selected_question,path)
+		elif question_type == 'audio':
+			print('audio question')
+			Mode = gamePanel.show_audio_question(selected_question,path)
 		else:
 			print('Normal')
 			gamePanel.show_question(selected_question)
