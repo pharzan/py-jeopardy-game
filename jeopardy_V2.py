@@ -7,7 +7,7 @@ from pygame.locals import *
 Time_Limit= 60
 Mode="main_menu"
 Time_Limit = 60
-Width, Height = 1200,800
+Width, Height = 1200,700
 question_file = 'qset1_backup'
 Rows, Cols = 0,0
 Cats = []
@@ -33,10 +33,13 @@ class Cell(object):
 		self.type = ''
 		self.xPos = xPos
 		self.yPos = yPos
+		self.width = 0
+		self.height= 0
 		self.content = ''
 		self.score = 0
 		self.selected = False
 		self.type = ''
+		self.background = ''
 	def set_content(self,cell_text):
 		self.content = cell_text
 
@@ -98,10 +101,9 @@ class Panel(object):
 				except:
 					text = str(cell.content)
 					sizeX, sizeY = self.font.size(text)
-					self.screen.blit(self.font.render(text, True, black), (j*Width/6, i*Height/8))
-
-				
+					self.screen.blit(self.font.render(text, True, black), (j*Width/6, i*Height/8))				
 		pygame.display.update()
+
 	def clicked(self,pos):
 		# Returns false if already selected
 		question_type = 'normal'
@@ -119,7 +121,18 @@ class Panel(object):
 							return selected, question_type, path
 		return False
 					
+	def show_cell(self,cell):
+		print('show',cell.width)
+		self.rect = pygame.draw.rect(self.screen, (cell.background), (cell.xPos, cell.yPos, cell.width, cell.height))
+		pygame.display.update()
 
+	def check_click(self,cell,pos):
+		width = cell.xPos + cell.width
+		height = cell.yPos + cell.height
+		if cell.xPos<pos[0]<width:
+			if(cell.yPos<pos[1]<height):
+				print('cell Clicked')
+				
 	def show_question(self,q):
 		done_flag = False
 		question_txt = q['question']
@@ -127,11 +140,21 @@ class Panel(object):
 		self.clear_screen(black)
 		self.screen.blit(self.font.render(question_txt, True, red), (Width/2-(sizeX/2), Height/2))
 		pygame.display.update()
+		success = Cell(Width/8,Height-2*Height/6)
+		success.color = green
+		success.width = Width/6
+		success.height = Height/8
+		success.background = green
+		self.show_cell(success)
 		while not done_flag:
+			timer.show()
+			pygame.display.update()
 			for event in pygame.event.get():
+
 				if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+					self.check_click(success,event.pos)
 					# in question click detection
-					return "board_time"
+					# return "board_time"
 			
 			
 	def show_picture_question(self,q,path):
@@ -242,7 +265,7 @@ while True:
 		else:
 			print('Normal')
 			Mode = gamePanel.show_question(selected_question)
-		timer.show()
+			
 	if Mode == 'main_menu':
 		number_of_teams = int(input("Number of teams: "))
 		teams = Team(number_of_teams)
