@@ -137,6 +137,7 @@ class Panel(object):
 								path = board_matrix[j][i].content['path']
 								cell.selected = True
 								return selected, question_type, path
+
 		return '','',''
 				
 			
@@ -215,6 +216,7 @@ class Panel(object):
 		# pygame.display.flip()
 	def clear_screen(self,color):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
+		
 class Team(object):
 	def __init__(self,teams):
 		self.players=Team.Players()

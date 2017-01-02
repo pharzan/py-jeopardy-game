@@ -1,4 +1,4 @@
-Row,Col,Question,Answer,Score,Categories,Type,Path,Rows,Cols
+Col,Row,Question,Answer,Score,Categories,Type,Path,Rows,Cols
 0,0,Banana,Countable,200,Countable/Uncountable,picture,banana.jpg,5,5
 1,0,Excitement,Uncountable,400,Countable/Uncountable,audio,banana.wav,,
 2,0,Information,Uncountable,600,Countable/Uncountable,,,,
