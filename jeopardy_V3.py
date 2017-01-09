@@ -49,11 +49,17 @@ class Cell(object):
 	def set_content(self,cell_text):
 		self.content = cell_text
 
-
+class Team(object):
+	def __init__(self,name):
+		self.score = 0
+		self.team_name = name
+	def set_score(self,score):
+		self.score = score
 
 class GameBoard(object):
 	def __init__(self):
 		self.Cells=[]
+		self.Teams=[]
 		pygame.init()
 		self.font = pygame.font.SysFont('Arial', 18)
 		pygame.display.set_caption('Jeopardy board game')
@@ -65,10 +71,10 @@ class GameBoard(object):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
 	def update_cells(self):
-		print('mode',Mode)
+		df = []
+		print('Update Cells',Mode)
 		self.Cells = []
-		if Mode == 'board_time':
-			print('Here')		
+		if Mode == 'board_time':	
 			def read_question_file(question_file):
 				q=[]
 				cats=[]
@@ -93,21 +99,7 @@ class GameBoard(object):
 							  "col" : col
 							  })
 				return q
-
 			df = read_question_file(question_file)
-			df.append({
-				'name': 'Team A',
-				'type': 'team', 
-				'category': '10G',
-				'path': 'blah.txt', 
-				'score': 200, 
-				'col': 5, 'row': 0, 
-				'selected':False
-				})
-			for data in df:
-				self.Cells.append(Cell(data))
-			for cell in self.Cells:
-				gameBoard.show_cell(cell)
 		if Mode == 'question_time':
 			s={
 				'type':'button',
@@ -131,9 +123,21 @@ class GameBoard(object):
 			fail = Cell(f)
 			self.Cells.append(success)
 			self.Cells.append(fail)
+		df.append({
+					'answer': 'FSDGFDGFDSGFDSGSFDGSD', 
+					'category': 'Trivia',
+					'score': 'A', 'path': 
+					'nan', 
+					'row': 0, 
+					'type': 'team', 
+					'col': 6, 
+					'question': 'What’s the most widely spoken language in the world?'})
+		for data in df:
+			self.Cells.append(Cell(data))
+		for cell in self.Cells:
+			gameBoard.show_cell(cell)
 
 	def show_cell(self,cell):
-		# print(cell.type != 'team')
 		background = cell.background
 		if Mode == 'board_time' and cell.type != 'team':
 			text = str(cell.score)
@@ -150,6 +154,18 @@ class GameBoard(object):
 										cell.yPos, 
 										cell.width, 
 										cell.height))
+		if cell.type == 'team':
+			print('Here>>>>')
+			if Mode == 'question_time':
+				background = white
+			text = str(cell.score)
+			self.rect = pygame.draw.rect(self.screen, background, 
+									   (cell.xPos, 
+										cell.yPos, 
+										cell.width, 
+										cell.height),2)
+			self.screen.blit(self.font.render(text, True, red), 
+										 (cell.xPos, cell.yPos ))
 		pygame.display.update()
 
 
@@ -202,7 +218,7 @@ class GameBoard(object):
 				if(cell.yPos<pos[1]<height):
 					return cell
 		return False			
-Mode = 'board_time'
+Mode = 'main_menu'
 gameBoard = GameBoard()
 gameBoard.update_cells()
 
@@ -219,7 +235,6 @@ while True:
 				gameBoard.clear_screen(white)
 				gameBoard.update_cells()
 			elif Mode == 'board_time':
-
 				clicked_cell = gameBoard.clicked(event.pos)
 				if clicked_cell.type=='nan':
 					Mode = 'question_time'
@@ -229,6 +244,18 @@ while True:
 					gameBoard.show_cell(clicked_cell)
 				if Mode == 'question_time':
 					gameBoard.show_question(clicked_cell)
+			elif Mode == 'main_menu':
+				# count = int(input("Number of teams: "))
+				count = 3
+				for i in enumerate(range(count)):
+					# name = input('Team '+ str(i+1)+' name? ')
+					name = 'Team'+str(i)
+					team = Team(name)
+					gameBoard.Teams.append(team)
+				Mode = 'board_time'
+				gameBoard.update_cells()
+				print(gameBoard.Teams)
+
 
 	pygame.display.update()
 	clock.tick(60)
