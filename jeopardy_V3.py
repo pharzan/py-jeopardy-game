@@ -65,6 +65,7 @@ class GameBoard(object):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
 	def update_cells(self):
+		print('mode',Mode)
 		self.Cells = []
 		if Mode == 'board_time':
 			print('Here')		
@@ -209,27 +210,26 @@ gameBoard.update_cells()
 while True:
 	
 	for event in pygame.event.get():
-		gameBoard.update_cells()
-		print(Mode)
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			if  Mode == 'question_time':
+				
 				clicked_cell = gameBoard.clicked(event.pos)
-				if clicked_cell.question == 'CORRECT':
-					Mode = 'board_time'
-					print('Correct clicked')
-				if clicked_cell.question == 'INCORRECT':
-					print('inCorrect clicked')
-			if Mode == 'board_time':
+				print('>>>>',clicked_cell.type)
+				Mode = 'board_time'
+				gameBoard.clear_screen(white)
+				gameBoard.update_cells()
+			elif Mode == 'board_time':
+
 				clicked_cell = gameBoard.clicked(event.pos)
 				if clicked_cell.type=='nan':
 					Mode = 'question_time'
-					print(clicked_cell.type)
+					gameBoard.update_cells()
+
+					print('<<<<',clicked_cell.type)
 					gameBoard.show_cell(clicked_cell)
 				if Mode == 'question_time':
 					gameBoard.show_question(clicked_cell)
-						
+
+	pygame.display.update()
+	clock.tick(60)
 		# if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and Mode == 'board_time':
-			
-
-
-
