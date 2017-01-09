@@ -127,12 +127,21 @@ class GameBoard(object):
 		df.append({
 					'answer': 'FSDGFDGFDSGFDSGSFDGSD', 
 					'category': 'Trivia',
-					'score': 'A', 'path': 
+					'score': 0, 'path': 
 					'nan', 
 					'row': 0, 
 					'type': 'team', 
 					'col': 6, 
-					'question': 'What’s the most widely spoken language in the world?'})
+					'question': 'Team A'})
+		df.append({
+					'answer': 'FSDGFDGFDSGFDSGSFDGSD', 
+					'category': 'Trivia',
+					'score': 100, 'path': 
+					'nan', 
+					'row': 1, 
+					'type': 'team', 
+					'col': 6, 
+					'question': 'Team B'})
 		for data in df:
 			self.Cells.append(Cell(data))
 		for cell in self.Cells:
@@ -158,14 +167,17 @@ class GameBoard(object):
 		if cell.type == 'team':
 			if Mode == 'question_time':
 				background = white
-			text = str(cell.score)
+			team_name = str(cell.question)
+			team_score = str(cell.score)
 			self.rect = pygame.draw.rect(self.screen, background, 
 									   (cell.xPos, 
 										cell.yPos, 
 										cell.width, 
 										cell.height),2)
-			self.screen.blit(self.font.render(text, True, red), 
-										 (cell.xPos, cell.yPos ))
+			self.screen.blit(self.font.render(team_name, True, red), 
+										 (cell.xPos+5, cell.yPos ))
+			self.screen.blit(self.font.render(team_score, True, red), 
+										 (cell.xPos+5, cell.yPos+20 ))
 		pygame.display.update()
 
 
@@ -230,7 +242,7 @@ while True:
 			clicked_cell = gameBoard.clicked(event.pos)
 			if clicked_cell:
 				if clicked_cell.type == 'team':
-					print('TEAM CLICKED')
+					print('TEAM CLICKED',clicked_cell.xPos/width)
 				if  Mode == 'question_time':
 					clicked_cell = gameBoard.clicked(event.pos)
 					print('>>>>',clicked_cell.type)
