@@ -72,10 +72,12 @@ class GameBoard(object):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
 	def update_cells(self):
+
 		df = []
 		print('Update Cells',Mode)
 		self.Cells = []
-		if Mode == 'board_time':	
+		if Mode == 'board_time':
+			self.Selected_Team_idx = -1
 			def read_question_file(question_file):
 				q=[]
 				cats=[]
@@ -165,30 +167,38 @@ class GameBoard(object):
 										cell.width, 
 										cell.height))
 		if cell.type == 'team':
-			if Mode == 'question_time':
-				background = white
-			team_name = str(cell.question)
-			team_score = str(cell.score)
-			self.rect = pygame.draw.rect(self.screen, background, 
-									   (cell.xPos, 
-										cell.yPos, 
-										cell.width, 
-										cell.height),2)
-			self.screen.blit(self.font.render(team_name, True, red), 
-										 (cell.xPos+5, cell.yPos ))
-			self.screen.blit(self.font.render(team_score, True, red), 
-										 (cell.xPos+5, cell.yPos+20 ))
+			self.show_team(cell)
 		pygame.display.update()
 
 
 	def show_team(self,cell):
-		text = cell.name
+		# text = cell.name
+		print(Mode)
+		background = black
+		if Mode == 'question_time':
+				background = white
 		score = str(cell.score)
-		sizeX, sizeY = self.font.size(text)
-		self.screen.blit(self.font.render(text, True, red), 
-										 (cell.xPos, cell.yPos ))
-		self.screen.blit(self.font.render(score, True, red), 
-										 (cell.xPos, cell.yPos+25 ))
+		team_name = str(cell.question)
+		team_score = str(cell.score)
+		# sizeX, sizeY = self.font.size(text)
+		self.rect = pygame.draw.rect(self.screen, background, 
+									   (cell.xPos, 
+										cell.yPos, 
+										cell.width, 
+										cell.height),2)
+		self.screen.blit(self.font.render(team_name, True, red), 
+										 (cell.xPos+5, cell.yPos ))
+		self.screen.blit(self.font.render(team_score, True, red), 
+										 (cell.xPos+5, cell.yPos+20 ))
+		# self.rect = pygame.draw.rect(self.screen, black,
+		# 							   (cell.xPos, 
+		# 								cell.yPos, 
+		# 								cell.width, 
+		# 								cell.height),2)
+		# self.screen.blit(self.font.render(text, True, red), 
+		# 								 (cell.xPos, cell.yPos ))
+		# self.screen.blit(self.font.render(score, True, red), 
+		# 								 (cell.xPos, cell.yPos+25 ))
 
 	def show_question(self,cell):
 		text = cell.question
@@ -196,8 +206,22 @@ class GameBoard(object):
 		self.clear_screen(black)
 		self.screen.blit(self.font.render(text, True, red), (Width/2-(sizeX/2), Height/2))
 		self.show_buttons()
+		self.update_cells()
 		pygame.display.update()
 
+	def team_select(self,cell):
+		self.update_cells()
+		team_num = cell.xPos/width
+		self.Selected_Team_idx = team_num
+		# if self.Selected_Team_idx == team_num:
+		# 	print('AAAA')
+		# self.clear_screen(white)
+		
+		self.rect = pygame.draw.rect(self.screen, red, 
+									   (cell.xPos, 
+										cell.yPos, 
+										cell.width,
+										cell.height),2)
 	def show_buttons(self):
 		s={
 			'type':'button',
@@ -238,14 +262,19 @@ gameBoard.update_cells()
 while True:
 	
 	for event in pygame.event.get():
+		print(gameBoard.Selected_Team_idx)
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			clicked_cell = gameBoard.clicked(event.pos)
 			if clicked_cell:
 				if clicked_cell.type == 'team':
-					print('TEAM CLICKED',clicked_cell.xPos/width)
-				if  Mode == 'question_time':
+					# print('TEAM CLICKED',clicked_cell.xPos/width)
+					gameBoard.team_select(clicked_cell)
+				if gameBoard.Selected_Team_idx == -1:
+					print('No Team Selected!!!')
+					break
+				if  Mode == 'question_time' and clicked_cell.type != 'team':
 					clicked_cell = gameBoard.clicked(event.pos)
-					print('>>>>',clicked_cell.type)
+					# print('>>>>',clicked_cell.type)
 					Mode = 'board_time'
 					gameBoard.clear_screen(white)
 					gameBoard.update_cells()
@@ -254,8 +283,7 @@ while True:
 					if clicked_cell.type=='nan':
 						Mode = 'question_time'
 						gameBoard.update_cells()
-
-						print('<<<<',clicked_cell.type)
+						# print('<<<<',clicked_cell.type)
 						gameBoard.show_cell(clicked_cell)
 					if Mode == 'question_time':
 						gameBoard.show_question(clicked_cell)
