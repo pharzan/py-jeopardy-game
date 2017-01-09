@@ -60,6 +60,7 @@ class GameBoard(object):
 	def __init__(self):
 		self.Cells=[]
 		self.Teams=[]
+		self.Selected_Team_idx = -1
 		pygame.init()
 		self.font = pygame.font.SysFont('Arial', 18)
 		pygame.display.set_caption('Jeopardy board game')
@@ -155,7 +156,6 @@ class GameBoard(object):
 										cell.width, 
 										cell.height))
 		if cell.type == 'team':
-			print('Here>>>>')
 			if Mode == 'question_time':
 				background = white
 			text = str(cell.score)
@@ -227,34 +227,37 @@ while True:
 	
 	for event in pygame.event.get():
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-			if  Mode == 'question_time':
-				
-				clicked_cell = gameBoard.clicked(event.pos)
-				print('>>>>',clicked_cell.type)
-				Mode = 'board_time'
-				gameBoard.clear_screen(white)
-				gameBoard.update_cells()
-			elif Mode == 'board_time':
-				clicked_cell = gameBoard.clicked(event.pos)
-				if clicked_cell.type=='nan':
-					Mode = 'question_time'
+			clicked_cell = gameBoard.clicked(event.pos)
+			if clicked_cell:
+				if clicked_cell.type == 'team':
+					print('TEAM CLICKED')
+				if  Mode == 'question_time':
+					clicked_cell = gameBoard.clicked(event.pos)
+					print('>>>>',clicked_cell.type)
+					Mode = 'board_time'
+					gameBoard.clear_screen(white)
 					gameBoard.update_cells()
+				elif Mode == 'board_time':
+					clicked_cell = gameBoard.clicked(event.pos)
+					if clicked_cell.type=='nan':
+						Mode = 'question_time'
+						gameBoard.update_cells()
 
-					print('<<<<',clicked_cell.type)
-					gameBoard.show_cell(clicked_cell)
-				if Mode == 'question_time':
-					gameBoard.show_question(clicked_cell)
-			elif Mode == 'main_menu':
-				# count = int(input("Number of teams: "))
-				count = 3
-				for i in enumerate(range(count)):
-					# name = input('Team '+ str(i+1)+' name? ')
-					name = 'Team'+str(i)
-					team = Team(name)
-					gameBoard.Teams.append(team)
-				Mode = 'board_time'
-				gameBoard.update_cells()
-				print(gameBoard.Teams)
+						print('<<<<',clicked_cell.type)
+						gameBoard.show_cell(clicked_cell)
+					if Mode == 'question_time':
+						gameBoard.show_question(clicked_cell)
+				elif Mode == 'main_menu':
+					# count = int(input("Number of teams: "))
+					count = 3
+					for i in enumerate(range(count)):
+						# name = input('Team '+ str(i+1)+' name? ')
+						name = 'Team'+str(i)
+						team = Team(name)
+						gameBoard.Teams.append(team)
+					Mode = 'board_time'
+					gameBoard.update_cells()
+					print(gameBoard.Teams)
 
 
 	pygame.display.update()
