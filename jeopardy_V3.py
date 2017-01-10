@@ -58,8 +58,10 @@ class Team(object):
 
 class GameBoard(object):
 	def __init__(self):
+		self.Selected_question = -1
 		self.Cells=[]
 		self.Teams=[]
+		self.Already_selected = []
 		self.Selected_Team_idx = -1
 		pygame.init()
 		self.font = pygame.font.SysFont('Arial', 18)
@@ -103,6 +105,7 @@ class GameBoard(object):
 							  })
 				return q
 			df = read_question_file(question_file)
+
 		if Mode == 'question_time':
 			s={
 				'type':'button',
@@ -150,6 +153,8 @@ class GameBoard(object):
 			gameBoard.show_cell(cell)
 
 	def show_cell(self,cell):
+		if cell.selected == True:
+			return
 		background = cell.background
 		if Mode == 'board_time' and cell.type != 'team':
 			text = str(cell.score)
@@ -247,13 +252,23 @@ class GameBoard(object):
 		self.show_cell(fail)
 
 	def clicked(self,pos):
-		for cell in self.Cells:
+		for i,cell in enumerate(self.Cells):
+			
 			width = cell.xPos + cell.width
 			height = cell.yPos + cell.height
 			if cell.xPos<pos[0]<width:
 				if(cell.yPos<pos[1]<height):
+					if(cell.type != 'button' or cell.type != 'team'):
+						self.Already_selected.append(cell)
 					return cell
 		return False			
+
+	def update_score(self,cell):
+		if cell.question == 'CORRECT':
+			print('+++',self.Selected_Team_idx,self.Selected_question.score,self.Selected_question.selected)
+		if cell.question == 'INCORRECT':
+			print('---',self.Selected_Team_idx)
+
 Mode = 'main_menu'
 gameBoard = GameBoard()
 gameBoard.update_cells()
@@ -262,7 +277,6 @@ gameBoard.update_cells()
 while True:
 	
 	for event in pygame.event.get():
-		print(gameBoard.Selected_Team_idx)
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 			clicked_cell = gameBoard.clicked(event.pos)
 			if clicked_cell:
@@ -274,13 +288,16 @@ while True:
 					break
 				if  Mode == 'question_time' and clicked_cell.type != 'team':
 					clicked_cell = gameBoard.clicked(event.pos)
-					# print('>>>>',clicked_cell.type)
+					gameBoard.update_score(clicked_cell)
+					print('>>>>',clicked_cell.question)
 					Mode = 'board_time'
 					gameBoard.clear_screen(white)
 					gameBoard.update_cells()
 				elif Mode == 'board_time':
 					clicked_cell = gameBoard.clicked(event.pos)
 					if clicked_cell.type=='nan':
+						clicked_cell.selected = True
+						gameBoard.Selected_question=clicked_cell
 						Mode = 'question_time'
 						gameBoard.update_cells()
 						# print('<<<<',clicked_cell.type)
