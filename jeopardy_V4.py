@@ -200,6 +200,13 @@ class GameBoard(object):
 	def reset_team_select(self):
 		for team in self.Teams:
 			team.selected = False
+
+	def check_team_select(self):
+		for team in self.Teams:
+			if team.selected:
+				return True
+		return False
+
 gameBoard = GameBoard()
 gameBoard.update_cells()
 while True:
@@ -209,15 +216,15 @@ while True:
 			gameBoard.update_cells()
 			if clicked_cell:
 				print(clicked_cell.question,clicked_cell.selected)
-				print('clicked')
-				if Mode == 'question_time':	
-					Mode = 'board_time'
-					gameBoard.update_cells()
-				elif Mode == 'board_time':
-					if not clicked_cell.selected:
-						Mode = 'question_time'
-						clicked_cell.selected = True
-						gameBoard.show_question(clicked_cell)
+				if gameBoard.check_team_select():
+					if Mode == 'question_time':
+						Mode = 'board_time'
+						gameBoard.update_cells()
+					elif Mode == 'board_time':
+						if not clicked_cell.selected:
+							Mode = 'question_time'
+							clicked_cell.selected = True
+							gameBoard.show_question(clicked_cell)
 
 	pygame.display.update()
 	clock.tick(60)
