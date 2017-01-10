@@ -121,7 +121,7 @@ class GameBoard(object):
 										cell.width, 
 										cell.height))
 
-		if Mode == 'board_time' and cell.type != 'team':
+		elif Mode == 'board_time' and cell.type != 'team':
 			text = str(cell.score)
 			self.rect = pygame.draw.rect(self.screen, background, 
 									   (cell.xPos, 
@@ -160,9 +160,19 @@ class GameBoard(object):
 		self.screen.blit(self.font.render(team_score, True, red), 
 										 (cell.xPos+5, cell.yPos+20 ))
 
+	def show_question(self,cell):
+		text = cell.question
+		sizeX, sizeY = self.font.size(text)
+		self.clear_screen(black)
+		self.screen.blit(self.font.render(text, True, red), (Width/2-(sizeX/2), Height/2))
+		# self.show_buttons()
+		self.update_cells()
+		pygame.display.update()
+
+
 	def update_cells(self):
-		gameBoard.clear_screen(white)
 		if Mode == 'board_time':
+			gameBoard.clear_screen(white)
 			for cell in self.BoardCells:
 				gameBoard.show_cell(cell)
 		for team in self.Teams:
@@ -180,7 +190,7 @@ class GameBoard(object):
 						if(cell.type != 'button' and cell.type != 'team'):
 							# print(cell.selected)
 							print('AAAA')
-							cell.selected = True
+							# cell.selected = True
 						if cell.type == 'team':
 							self.reset_team_select()
 							cell.selected = not cell.selected
@@ -193,16 +203,21 @@ class GameBoard(object):
 gameBoard = GameBoard()
 gameBoard.update_cells()
 while True:
-	
 	for event in pygame.event.get():
-
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:	
-
 			clicked_cell = gameBoard.clicked(event.pos)
 			gameBoard.update_cells()
 			if clicked_cell:
 				print(clicked_cell.question,clicked_cell.selected)
 				print('clicked')
+				if Mode == 'question_time':	
+					Mode = 'board_time'
+					gameBoard.update_cells()
+				elif Mode == 'board_time':
+					if not clicked_cell.selected:
+						Mode = 'question_time'
+						clicked_cell.selected = True
+						gameBoard.show_question(clicked_cell)
 
 	pygame.display.update()
 	clock.tick(60)
