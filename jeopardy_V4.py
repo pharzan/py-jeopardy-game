@@ -29,6 +29,8 @@ class Cell(object):
 		self.yPos = data['col']*height
 		self.width = width
 		self.height= height
+		if 'Mode' in data:
+			self.Mode = data['Mode']
 		if 'question' in data:
 			self.question = data['question']
 		if 'answer' in data:
@@ -51,6 +53,7 @@ class GameBoard(object):
 		self.Selected_question = -1
 		self.BoardCells=[]
 		self.Teams=[]
+		self.Buttons =[]
 		self.Selected_Team_idx = -1
 		pygame.init()
 		self.font = pygame.font.SysFont('Arial', 18)
@@ -81,6 +84,27 @@ class GameBoard(object):
 					'col': 6, 
 					'question': 'Team B',
 					'selected':False}))
+
+		s={ 'Mode':'question_time',
+			'type':'button',
+			'row':1,
+			'col':5,
+			'width':width,
+			'height':height,
+			'background':green,
+			'score':0,'question':'CORRECT'
+		}
+		f={'Mode':'question_time',
+			'type':'button',
+			'row':4,
+			'col':5,
+			'width':width,
+			'height':height,
+			'background':red,
+			'score':0,'question':'INCORRECT'
+		}
+		self.Buttons.append(Cell(s))
+		self.Buttons.append(Cell(f))
 
 
 	def read_question_file(self,question_file):
@@ -141,9 +165,8 @@ class GameBoard(object):
 		pygame.display.update()
 
 	def show_team(self,cell):
+		foreground = red
 		background = black
-
-
 		if Mode == 'question_time':
 				background = white
 		score = str(cell.score)
@@ -155,9 +178,9 @@ class GameBoard(object):
 										cell.yPos, 
 										cell.width, 
 										cell.height),2)
-		self.screen.blit(self.font.render(team_name, True, red), 
+		self.screen.blit(self.font.render(team_name, True, foreground), 
 										 (cell.xPos+5, cell.yPos ))
-		self.screen.blit(self.font.render(team_score, True, red), 
+		self.screen.blit(self.font.render(team_score, True, foreground), 
 										 (cell.xPos+5, cell.yPos+20 ))
 
 	def show_question(self,cell):
@@ -175,12 +198,22 @@ class GameBoard(object):
 			gameBoard.clear_screen(white)
 			for cell in self.BoardCells:
 				gameBoard.show_cell(cell)
+		for button in self.Buttons:
+			if Mode == button.Mode:
+				self.show_cell(button)
 		for team in self.Teams:
 			gameBoard.show_cell(team)
 		pygame.display.update()
 
+	def show_buttons(self):
+		
+		success = Cell(s)
+		fail = Cell(f)
+		self.show_cell(success)
+		self.show_cell(fail)
+
 	def clicked(self,pos):
-		all_cells = [self.BoardCells,self.Teams]
+		all_cells = [self.BoardCells,self.Teams,self.Buttons]
 		for i,cells in enumerate(all_cells):
 			for cell in cells:
 				width = cell.xPos + cell.width
