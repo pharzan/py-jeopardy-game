@@ -37,6 +37,8 @@ class Cell(object):
 			self.answer = data['answer']
 		if 'name' in data:
 			self.name = data['name']
+		if 'path' in data:
+			self.path = data['path']
 		self.score = data['score']
 		self.selected = False
 
@@ -201,6 +203,8 @@ class GameBoard(object):
 										 (cell.xPos+5, cell.yPos+20 ))
 
 	def show_question(self,cell):
+		if cell.type == 'picture':
+			print('picture',cell.path)
 		text = cell.question
 		sizeX, sizeY = self.font.size(text)
 		self.clear_screen(black)
