@@ -56,6 +56,8 @@ class GameBoard(object):
 		self.Buttons =[]
 		self.Selected_Team_idx = -1
 		self.current_question = {}
+		self.selected_team = 0
+		self.previous_team = 0
 		pygame.init()
 		self.font = pygame.font.SysFont('Arial', 18)
 		pygame.display.set_caption('Jeopardy board game')
@@ -107,7 +109,6 @@ class GameBoard(object):
 		self.Buttons.append(Cell(s))
 		self.Buttons.append(Cell(f))
 
-
 	def read_question_file(self,question_file):
 				q=[]
 				cats=[]
@@ -136,10 +137,8 @@ class GameBoard(object):
 		self.rect = pygame.draw.rect(self.screen, (color), (0, 0, Width, Height))
 
 	def show_cell(self,cell):
-		background = cell.background
-		
+		background = cell.background		
 		if(cell.selected):
-			print('HERE')
 			self.rect = pygame.draw.rect(self.screen, cell.background, 
 									   (cell.xPos, 
 										cell.yPos, 
@@ -170,10 +169,27 @@ class GameBoard(object):
 		background = black
 		if Mode == 'question_time':
 				background = white
+		## the next line clear the background for the teams
+		self.rect = pygame.draw.rect(self.screen, background, 
+									   (cell.xPos, 
+										cell.yPos, 
+										cell.width, 
+										cell.height))
+		if cell.selected:
+			self.rect = pygame.draw.rect(self.screen, background, 
+									   (cell.xPos, 
+										cell.yPos, 
+										cell.width, 
+										cell.height))
+			self.rect = pygame.draw.rect(self.screen, yellow, 
+									   (cell.xPos, 
+										cell.yPos, 
+										cell.width-10, 
+										cell.height-10))
+
 		score = str(cell.score)
 		team_name = str(cell.question)
 		team_score = str(cell.score)
-		# sizeX, sizeY = self.font.size(text)
 		self.rect = pygame.draw.rect(self.screen, background, 
 									   (cell.xPos, 
 										cell.yPos, 
@@ -193,12 +209,12 @@ class GameBoard(object):
 		self.update_cells()
 		pygame.display.update()
 
-
 	def update_cells(self):
 		if Mode == 'board_time':
 			gameBoard.clear_screen(white)
 			for cell in self.BoardCells:
 				gameBoard.show_cell(cell)
+
 		for button in self.Buttons:
 			if Mode == button.Mode:
 				self.show_cell(button)
@@ -206,13 +222,10 @@ class GameBoard(object):
 			gameBoard.show_cell(team)
 		pygame.display.update()
 
-	# def show_buttons(self):
-	# 	success = Cell(s)
-	# 	fail = Cell(f)
-	# 	self.show_cell(success)
-	# 	self.show_cell(fail)
-
 	def clicked(self,pos):
+		if gameBoard.selected_team  != 0:
+			gameBoard.previous_team = gameBoard.selected_team
+
 		all_cells = [self.BoardCells,self.Teams,self.Buttons]
 		for i,cells in enumerate(all_cells):
 			for cell in cells:
@@ -221,6 +234,7 @@ class GameBoard(object):
 				if cell.xPos<pos[0]<width:
 					if(cell.yPos<pos[1]<height):
 						if cell.type == 'team':
+							gameBoard.selected_team=cell;
 							self.reset_team_select()
 							cell.selected = not cell.selected
 						return cell
@@ -237,19 +251,31 @@ class GameBoard(object):
 		return False
 
 	def check_button(self,btn):
+		current_score = self.current_question.score
 		if btn.question=='CORRECT':
 			selected_team = self.check_team_select()
-			selected_team.score = selected_team.score + self.current_question.score	
+			self.update_score(current_score)
 		elif btn.question=='INCORRECT':
 			selected_team = self.check_team_select()
-			selected_team.score = selected_team.score - self.current_question.score
+			self.update_score(-current_score)
 		gameBoard.update_cells()
+
+	def update_score(self,score,board_mode):
+		if board_mode:
+			for team in gameBoard.Teams:
+				if team.selected:
+					print ('here we have a prevoius team and we in board mode so we deduct from prevoius team');
+					gameBoard.previous_team.score = gameBoard.previous_team.score + score
+		else:
+			selected_team.score = selected_team.score + score
+		selected_team = self.check_team_select()
 
 
 gameBoard = GameBoard()
 gameBoard.update_cells()
 while True:
 	for event in pygame.event.get():
+
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:	
 			clicked_cell = gameBoard.clicked(event.pos)
 			gameBoard.update_cells()
@@ -257,10 +283,14 @@ while True:
 				print('>>>',clicked_cell.type,clicked_cell.question,clicked_cell.selected)
 				if gameBoard.check_team_select():
 					if Mode == 'question_time':
-						Mode = 'board_time'
-						gameBoard.update_cells()
 						if clicked_cell.type == 'button':
+							Mode = 'board_time'
 							gameBoard.check_button(clicked_cell)
+						elif clicked_cell.type == 'team':
+							print('team select')
+							
+							gameBoard.update_score(-gameBoard.current_question.score,True)
+						gameBoard.update_cells()
 					elif Mode == 'board_time':
 						if not clicked_cell.selected:
 							Mode = 'question_time'
