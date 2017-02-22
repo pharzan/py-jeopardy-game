@@ -203,8 +203,7 @@ class GameBoard(object):
 										 (cell.xPos+5, cell.yPos+20 ))
 
 	def show_question(self,cell):
-		if cell.type == 'picture':
-			print('picture',cell.path)
+		
 		text = cell.question
 		sizeX, sizeY = self.font.size(text)
 		self.clear_screen(black)
@@ -212,7 +211,12 @@ class GameBoard(object):
 		# self.show_buttons()
 		self.update_cells()
 		pygame.display.update()
-
+		if cell.type == 'picture':
+			print('picture',cell.path)
+			img = pygame.image.load('./banana.jpg')
+			self.screen.blit(img,(0,0))
+			pygame.display.flip()
+			
 	def update_cells(self):
 		if Mode == 'board_time':
 			gameBoard.clear_screen(white)
