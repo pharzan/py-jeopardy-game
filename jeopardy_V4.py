@@ -254,21 +254,22 @@ class GameBoard(object):
 		current_score = self.current_question.score
 		if btn.question=='CORRECT':
 			selected_team = self.check_team_select()
-			self.update_score(current_score)
+			self.update_score(current_score,False)
 		elif btn.question=='INCORRECT':
 			selected_team = self.check_team_select()
-			self.update_score(-current_score)
+			self.update_score(-current_score,False)
 		gameBoard.update_cells()
 
-	def update_score(self,score,board_mode):
-		if board_mode:
+	def update_score(self,score,team_select):
+		if team_select:
 			for team in gameBoard.Teams:
 				if team.selected:
 					print ('here we have a prevoius team and we in board mode so we deduct from prevoius team');
 					gameBoard.previous_team.score = gameBoard.previous_team.score + score
 		else:
+			selected_team = self.check_team_select()
 			selected_team.score = selected_team.score + score
-		selected_team = self.check_team_select()
+		
 
 
 gameBoard = GameBoard()
