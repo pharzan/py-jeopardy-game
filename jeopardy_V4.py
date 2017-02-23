@@ -213,10 +213,10 @@ class GameBoard(object):
 		pygame.display.update()
 		if cell.type == 'picture':
 			print('picture',cell.path)
-			img = pygame.image.load('./banana.jpg')
-			self.screen.blit(img,(0,0))
+			img = pygame.image.load(cell.path)
+			self.screen.blit(img,(width,height))
 			pygame.display.flip()
-			
+
 	def update_cells(self):
 		if Mode == 'board_time':
 			gameBoard.clear_screen(white)
@@ -278,13 +278,45 @@ class GameBoard(object):
 			selected_team = self.check_team_select()
 			selected_team.score = selected_team.score + score
 		
+class Timer(object):
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((Width,Height), 0, 32)
+        self.font = pygame.font.SysFont('Arial', 32)
+        self.timer_y_pos=0 # top
+        self.box_width = Width/6 #set to middle of screen
+        self.box_height = 100
+        self.timer_x_pos = Width/2 - self.box_width/2
+        self.counter=0
+        self.startTime=0
+        self.elapsed=0
+    def start(self):
+        self.startTime = time.clock()
+    def show(self):
+        self.elapsed = round(time.clock() - self.startTime,1)
+        elapsed = str(self.elapsed)
+        sizeX, sizeY = self.font.size(elapsed)
+        middle_X = self.timer_x_pos+self.box_width/2-sizeX/2
+        middle_Y = self.box_height/2-sizeY/2
+        self.rect = pygame.draw.rect(self.screen, (blue), (self.timer_x_pos, self.timer_y_pos, self.box_width, self.box_height))
+        self.screen.blit(self.font.render(elapsed, True, yellow), (middle_X, middle_Y))
+        if self.elapsed >= Time_Limit:
+            pygame.mixer.music.load('buzzer2.wav')
+            pygame.mixer.music.play()
+            timer.start()
+        pygame.display.update()
+        # self.screen.update()
+    def check_click(self,pos):
+    	#check click on timer
+    	return False
 
-
+timer = Timer()
 gameBoard = GameBoard()
 gameBoard.update_cells()
 while True:
-	for event in pygame.event.get():
 
+	timer.show()
+	for event in pygame.event.get():
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:	
 			clicked_cell = gameBoard.clicked(event.pos)
 			gameBoard.update_cells()
@@ -306,6 +338,7 @@ while True:
 							clicked_cell.selected = True
 							gameBoard.current_question = clicked_cell
 							gameBoard.show_question(clicked_cell)
+							timer.start()
 
 	pygame.display.update()
 	clock.tick(60)
