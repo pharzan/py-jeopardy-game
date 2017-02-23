@@ -203,7 +203,6 @@ class GameBoard(object):
 										 (cell.xPos+5, cell.yPos+20 ))
 
 	def show_question(self,cell):
-		
 		text = cell.question
 		sizeX, sizeY = self.font.size(text)
 		self.clear_screen(black)
@@ -222,7 +221,6 @@ class GameBoard(object):
 			gameBoard.clear_screen(white)
 			for cell in self.BoardCells:
 				gameBoard.show_cell(cell)
-
 		for button in self.Buttons:
 			if Mode == button.Mode:
 				self.show_cell(button)
@@ -233,7 +231,6 @@ class GameBoard(object):
 	def clicked(self,pos):
 		if gameBoard.selected_team  != 0:
 			gameBoard.previous_team = gameBoard.selected_team
-
 		all_cells = [self.BoardCells,self.Teams,self.Buttons]
 		for i,cells in enumerate(all_cells):
 			for cell in cells:
