@@ -314,8 +314,8 @@ timer = Timer()
 gameBoard = GameBoard()
 gameBoard.update_cells()
 while True:
-
-	timer.show()
+	if Mode=='question_time':
+		timer.show()
 	for event in pygame.event.get():
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:	
 			clicked_cell = gameBoard.clicked(event.pos)
