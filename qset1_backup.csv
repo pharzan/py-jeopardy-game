@@ -1,7 +1,7 @@
 Col,Row,Question,Answer,Score,Categories,Type,Path,Rows,Cols
-0,0,,Countable,200,Countable/Uncountable,picture,banana.jpg,5,5
-1,0,Excitement,Uncountable,400,Countable/Uncountable,audio,banana.wav,,
-2,0,Information,Uncountable,600,Countable/Uncountable,,,,
+0,0, ,Countable,200,Countable/Uncountable,picture,banana.jpg,5,5
+1,0,kid,Uncountable,400,Countable/Uncountable,picture,veg.jpg,,
+2,0,Information,Uncountable,600,Countable/Uncountable,audio,banana.wav,,
 3,0,Experiences,Countable,800,Countable/Uncountable,,,,
 4,0,Software,Uncountable,1000,Countable/Uncountable,,,,
 0,1,The man is looking for an job.,The man is looking for a job.,200,Find the Mistake,,,,

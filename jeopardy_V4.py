@@ -22,6 +22,33 @@ red = (255,0,0)
 green = (0,255,0)
 yellow = (255,255,0)
 
+def aspect_scale(img,bx,by):
+    """ Scales 'img' to fit into box bx/by.
+     This method will retain the original image's aspect ratio """
+    ix,iy = img.get_size()
+    if ix > iy:
+        # fit to width
+        scale_factor = bx/float(ix)
+        sy = scale_factor * iy
+        if sy > by:
+            scale_factor = by/float(iy)
+            sx = scale_factor * ix
+            sy = by
+        else:
+            sx = bx
+    else:
+        # fit to height
+        scale_factor = by/float(iy)
+        sx = scale_factor * ix
+        if sx > bx:
+            scale_factor = bx/float(ix)
+            sx = bx
+            sy = scale_factor * iy
+        else:
+            sy = by
+
+    return pygame.transform.scale(img, (int(round(sx)),int(round(sy))))
+
 class Cell(object):
 	def __init__(self,data):
 		self.type = data['type']
@@ -206,15 +233,27 @@ class GameBoard(object):
 		text = cell.question
 		sizeX, sizeY = self.font.size(text)
 		self.clear_screen(black)
-		self.screen.blit(self.font.render(text, True, red), (Width/2-(sizeX/2), Height/2))
+		
 		# self.show_buttons()
 		self.update_cells()
 		pygame.display.update()
 		if cell.type == 'picture':
 			print('picture',cell.path)
 			img = pygame.image.load(cell.path)
-			self.screen.blit(img,(width,height))
+			img = aspect_scale(img, 400, 400)
+			self.screen.blit(self.font.render(text, True, red), (Width/2-(sizeX/2), Height/2+20))
+			img_w , img_h = img.get_rect().size
+			self.screen.blit(img,(Width/2-(img_w/2),Height/2-(img_h/2)-100))
 			pygame.display.flip()
+		elif cell.type == 'audio':
+			print('audio',cell.path,cell.question)
+			pygame.mixer.music.load(cell.path)
+			pygame.mixer.music.play()
+			self.screen.blit(self.font.render('REPLAY |>', True, red), (Width/2-(sizeX/2), Height/2+20))
+
+
+		else:
+			self.screen.blit(self.font.render(text, True, red), (Width/2-(sizeX/2), Height/2))
 
 	def update_cells(self):
 		if Mode == 'board_time':
@@ -243,7 +282,7 @@ class GameBoard(object):
 							self.reset_team_select()
 							cell.selected = not cell.selected
 						return cell
-		return False		
+		return gameBoard.current_question		
 
 	def reset_team_select(self):
 		for team in self.Teams:
@@ -318,7 +357,8 @@ while True:
 			clicked_cell = gameBoard.clicked(event.pos)
 			gameBoard.update_cells()
 			if clicked_cell:
-				print('>>>',clicked_cell.type,clicked_cell.question,clicked_cell.selected)
+				print('>>><<<',clicked_cell.type,clicked_cell.question,clicked_cell.selected)
+
 				if gameBoard.check_team_select():
 					if Mode == 'question_time':
 						if clicked_cell.type == 'button':
@@ -326,9 +366,13 @@ while True:
 							gameBoard.check_button(clicked_cell)
 						elif clicked_cell.type == 'team':
 							print('team select')
-							
 							gameBoard.update_score(-gameBoard.current_question.score,True)
+						else:
+							print('Empty space clicked will reshow the question, this is for replay of audio files specially')
+							gameBoard.show_question(gameBoard.current_question)
 						gameBoard.update_cells()
+						
+
 					elif Mode == 'board_time':
 						if not clicked_cell.selected:
 							Mode = 'question_time'
@@ -336,6 +380,8 @@ while True:
 							gameBoard.current_question = clicked_cell
 							gameBoard.show_question(clicked_cell)
 							timer.start()
+						
+
 
 	pygame.display.update()
 	clock.tick(60)
