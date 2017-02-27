@@ -6,7 +6,7 @@ from pygame.locals import *
 clock = pygame.time.Clock()
 
 # Constants ::
-Time_Limit= 60
+Time_Limit= 30
 Width, Height = 1200,700
 width = Width/6
 height = Height/8
@@ -21,7 +21,7 @@ blue = (0,0,255)
 red = (255,0,0)
 green = (0,255,0)
 yellow = (255,255,0)
-
+# categories = ['famous people','geography','history','sport','science','trivia']
 def aspect_scale(img,bx,by):
     """ Scales 'img' to fit into box bx/by.
      This method will retain the original image's aspect ratio """
@@ -77,6 +77,17 @@ class Cell(object):
 	def set_content(self,cell_text):
 		self.content = cell_text
 
+
+
+categories = [Cell({
+					'score': 'Famous People', 
+					'row': 0, 
+					'col': 0, 
+					'type': '', 
+					'question': 'Famous People',
+					'selected':False,
+					
+					})]
 class GameBoard(object):
 	def __init__(self):
 		self.Selected_question = -1
@@ -96,31 +107,42 @@ class GameBoard(object):
 		questions = self.read_question_file(question_file)
 		for q in questions:
 			self.BoardCells.append(Cell(q))
+
 		self.Teams.append(Cell({
-					'answer': 'FSDGFDGFDSGFDSGSFDGSD', 
-					'category': 'Trivia',
-					'score': 0, 'path': 
-					'nan', 
+					'score': 0, 
 					'row': 0, 
 					'type': 'team', 
 					'col': 6, 
 					'question': 'Team A',
 					'selected':False}))
 		self.Teams.append(Cell({
-					'answer': 'FSDGFDGFDSGFDSGSFDGSD', 
-					'category': 'Trivia',
-					'score': 100, 'path': 
-					'nan', 
+					'score': 0, 
 					'row': 1, 
-					'type': 'team', 
 					'col': 6, 
+					'type': 'team', 
 					'question': 'Team B',
-					'selected':False}))
-
+					'selected':False
+					}))
+		self.Teams.append(Cell({
+					'score': 0, 
+					'row': 2, 
+					'col': 6, 
+					'type': 'team', 
+					'question': 'Team C',
+					'selected':False
+					}))
+		self.Teams.append(Cell({
+					'score': 0, 
+					'row': 3, 
+					'col': 6, 
+					'type': 'team', 
+					'question': 'Team D',
+					'selected':False
+					}))
 		s={ 'Mode':'question_time',
 			'type':'button',
 			'row':1,
-			'col':5,
+			'col':7,
 			'width':width,
 			'height':height,
 			'background':green,
@@ -129,7 +151,7 @@ class GameBoard(object):
 		f={'Mode':'question_time',
 			'type':'button',
 			'row':4,
-			'col':5,
+			'col':7,
 			'width':width,
 			'height':height,
 			'background':red,
@@ -258,6 +280,8 @@ class GameBoard(object):
 	def update_cells(self):
 		if Mode == 'board_time':
 			gameBoard.clear_screen(white)
+			for cat in categories:
+				gameBoard.show_cell(cat)
 			for cell in self.BoardCells:
 				gameBoard.show_cell(cell)
 		for button in self.Buttons:
@@ -349,6 +373,7 @@ class Timer(object):
 timer = Timer()
 gameBoard = GameBoard()
 gameBoard.update_cells()
+
 while True:
 	if Mode=='question_time':
 		timer.show()
@@ -369,6 +394,7 @@ while True:
 							gameBoard.update_score(-gameBoard.current_question.score,True)
 						else:
 							print('Empty space clicked will reshow the question, this is for replay of audio files specially')
+							timer.start()
 							gameBoard.show_question(gameBoard.current_question)
 						gameBoard.update_cells()
 						
